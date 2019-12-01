@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/11/30 18:09:49 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/01 18:06:16 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 typedef struct	s_desc
 {
-	char	*r;
+	int		resolution_ok;
 	int		x;
 	int		y;
 	char	*north;
@@ -35,10 +35,11 @@ typedef struct	s_desc
 	char	*west;
 	char	*east;
 	char	*sprite;
-	char	*floor;
-	char	*ceiling;
+	int		floor_ok;
+	int		ceiling_ok;
 	int		floor_tab[3];
 	int		ceiling_tab[3];
+	char	**scene;
 }				t_desc;
 
 typedef enum	e_path
@@ -49,5 +50,34 @@ typedef enum	e_path
 	EAST,
 	SPRITE
 }				t_path;
+
+//ft_is.c
+int		ft_is_space(char c);
+int		ft_is_number(char c);
+int		ft_is_print(char c);
+int		ft_is_scene_element(char c);
+int		ft_is_player_start(char c);
+
+//ft_utils.c
+int		ft_strlen(char *str);
+int		ft_strcmp(char *str1, char *str2);
+char	*ft_strjoin(char *str1, char *str2, int rd);
+int		ft_atoi_simple(char *str);
+
+//ft_check_args.c
+int		ft_check_file_extension(char *filename, char *extension);
+int		ft_check_description(char *filename, t_desc *desc);
+int		ft_check_args(int argc, char **argv, t_desc *desc);
+
+//ft_get_description_utils.c
+int		ft_move_space(char *str, int *i);
+int		ft_end_identifier(char *str, int *i);
+int		ft_get_number(char *str, int *i);
+int		ft_get_path(char *str, int *i, t_desc *desc, int path_id);
+int		ft_get_identifier(char *str, int *i, t_desc *desc);
+
+//ft_get_description.c
+int		ft_check_file_content(char *str, t_desc *desc);
+
 
 #endif
