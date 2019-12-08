@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/01 19:40:57 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/08 16:45:19 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,19 +50,19 @@ int		ft_parse_color(char *str, int tab[3], int *i, int *color_ok)
 	*i = *i + 1;
 	if (!(ft_move_space(str, i)))
 		return (0);
-	if ((tab[0] = ft_get_number(str, i)) == -1)
+	if ((tab[0] = ft_get_number(str, i)) == -1 || tab[0] < 0 || tab[0] > 255)
 		return (0);
 	if (str[*i] == ',')
 		*i = *i + 1;
 	else
 		return (0);
-	if ((tab[1] = ft_get_number(str, i)) == -1)
+	if ((tab[1] = ft_get_number(str, i)) == -1 || tab[1] < 0 || tab[1] > 255)
 		return (0);
 	if (str[*i] == ',')
 		*i = *i + 1;
 	else
 		return (0);
-	if ((tab[2] = ft_get_number(str, i)) == -1)
+	if ((tab[2] = ft_get_number(str, i)) == -1 || tab[2] < 0 || tab[2] > 255)
 		return (0);
 	*color_ok = 1;
 	if (!(ft_end_identifier(str, i)))
@@ -113,6 +113,8 @@ int		ft_check_scene(t_desc *desc)
 			return (0);
 		j++;
 	}
+	desc->nb_col = k;
+	desc->nb_l = j;
 	//check first line
 	k = 0;
 	while (desc->scene[0][k])
@@ -165,11 +167,13 @@ int		ft_check_file_content(char *str, t_desc *desc)
 		{
 			if (!(ft_parse_color(str, desc->floor_tab, &i, &(desc->floor_ok))))
 				return (0);
+			desc->floor_color = desc->floor_tab[0] * 65536 + desc->floor_tab[1] * 256 + desc->floor_tab[2];
 		}
 		else if (str[i] == 'C' && desc->ceiling_ok == 0)
 		{
 			if (!(ft_parse_color(str, desc->ceiling_tab, &i, &(desc->ceiling_ok))))
 				return (0);
+			desc->ceiling_color = desc->ceiling_tab[0] * 65536 + desc->ceiling_tab[1] * 256 + desc->ceiling_tab[2];
 		}
 		else if (str[i] == '1' && ft_is_description_ready_scene(desc))
 		{
@@ -181,7 +185,29 @@ int		ft_check_file_content(char *str, t_desc *desc)
 				if (ft_is_player_start(str[i]) && player_found)
 					return (0);
 				if (ft_is_player_start(str[i]))
+				{
+					if (str[i] == 'N')
+					{
+						desc->dir_pos.x = 0;
+						desc->dir_pos.y = -1;
+					}
+					else if(str[i] == 'S')
+					{
+						desc->dir_pos.x = 0;
+						desc->dir_pos.y = 1;
+					}
+					else if(str[i] == 'W')
+					{
+						desc->dir_pos.x = -1;
+						desc->dir_pos.y = 0;
+					}
+					else if(str[i] == 'E')
+					{
+						desc->dir_pos.x = 1;
+						desc->dir_pos.y = 0;
+					}
 					player_found = 1;
+				}
 				if (str[i] == '\n')//check first char of line
 				{
 					if (str[i + 1] != '1')

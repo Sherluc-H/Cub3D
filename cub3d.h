@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/01 18:06:16 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/08 16:45:29 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,19 @@
 #  define BUFFER_SIZE 100
 # endif
 
+typedef struct	s_dir_pos
+{
+	double x;
+	double y;
+	double angle;
+}				t_dir_pos;
+
+typedef struct	s_player_pos
+{
+	double x;
+	double y;
+}				t_player_pos;
+
 typedef struct	s_desc
 {
 	int		resolution_ok;
@@ -40,7 +53,20 @@ typedef struct	s_desc
 	int		floor_tab[3];
 	int		ceiling_tab[3];
 	char	**scene;
+	int		nb_col;
+	int		nb_l;
+	int		floor_color;
+	int		ceiling_color;
+	t_player_pos play_pos;
+	t_dir_pos dir_pos;
 }				t_desc;
+
+typedef struct	s_mlx_data
+{
+	void *mlx_ptr;
+	void *mlx_win;
+	t_desc *desc;
+}				t_mlx_data;
 
 typedef enum	e_path
 {

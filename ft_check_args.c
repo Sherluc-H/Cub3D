@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:48:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/01 18:27:09 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/07 10:54:16 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,8 @@ int		ft_check_description(char *filename, t_desc *desc)
 	if (!(ft_check_file_extension(filename, ".cub")))
 		return (0);
 	rd = 0;
-	fd = open(filename, O_RDONLY);
+	if((fd = open(filename, O_RDONLY)) == -1)
+		return (0);
 	str1 = malloc(sizeof(char) * 1);
 	str1[0] = '\0';
 	b = malloc(sizeof(char) * (BUFFER_SIZE + 1));
