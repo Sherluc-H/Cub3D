@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/08 16:45:19 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/10 11:20:32 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -188,23 +188,31 @@ int		ft_check_file_content(char *str, t_desc *desc)
 				{
 					if (str[i] == 'N')
 					{
-						desc->dir_pos.x = 0;
-						desc->dir_pos.y = -1;
+						desc->dir_pos.x = -1;
+						desc->dir_pos.y = 0;
+						desc->dir_pos.plane_x = 0;
+						desc->dir_pos.plane_y = 0.66;
 					}
 					else if(str[i] == 'S')
 					{
-						desc->dir_pos.x = 0;
-						desc->dir_pos.y = 1;
+						desc->dir_pos.x = 1;
+						desc->dir_pos.y = 0;
+						desc->dir_pos.plane_x = 0;
+						desc->dir_pos.plane_y = -0.66;
 					}
 					else if(str[i] == 'W')
 					{
-						desc->dir_pos.x = -1;
-						desc->dir_pos.y = 0;
+						desc->dir_pos.x = 0;
+						desc->dir_pos.y = -1;
+						desc->dir_pos.plane_x = -0.66;
+						desc->dir_pos.plane_y = 0;
 					}
 					else if(str[i] == 'E')
 					{
-						desc->dir_pos.x = 1;
-						desc->dir_pos.y = 0;
+						desc->dir_pos.x = 0;
+						desc->dir_pos.y = 1;
+						desc->dir_pos.plane_x = 0.66;
+						desc->dir_pos.plane_y = 0;
 					}
 					player_found = 1;
 				}
@@ -237,7 +245,14 @@ int		ft_check_file_content(char *str, t_desc *desc)
 					l = 0;
 					while (k < j)
 					{
-						if (str[i] != ' ')
+						if (ft_is_player_start(str[i]))
+						{
+							desc->play_pos.x = l;
+							desc->play_pos.y = row;
+							desc->scene[row][l] = '0';
+							l++;
+						}
+						else if (str[i] != ' ')
 						{
 							desc->scene[row][l] = str[i];
 							l++;

@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/08 16:45:29 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/10 17:32:10 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ typedef struct	s_dir_pos
 {
 	double x;
 	double y;
+	double plane_x;
+	double plane_y;
 	double angle;
 }				t_dir_pos;
 
@@ -65,6 +67,11 @@ typedef struct	s_mlx_data
 {
 	void *mlx_ptr;
 	void *mlx_win;
+	void *img_ptr;
+	char *data;
+	int bits_per_pixel;
+	int size_line;
+	int endian;
 	t_desc *desc;
 }				t_mlx_data;
 
