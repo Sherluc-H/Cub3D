@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/10 17:48:01 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/11 18:38:10 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,15 @@ void	ft_freer(t_desc *desc)
 		j++;
 	}
 	free(desc->scene);
+}
+
+int ft_exit_hook(t_mlx_data *mlx_data)
+{
+	mlx_destroy_window(mlx_data->mlx_ptr, mlx_data->win_ptr);
+	ft_freer(mlx_data->desc);
+	system("leaks Cub3D");
+	exit(0);
+	return(0);
 }
 
 void ft_print_desc(t_desc *desc)
@@ -147,7 +156,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 		k = 0;
 // 		while (k < desc->x)
 // 		{ 
-// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, k, j, desc->ceiling_color);
+// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, k, j, desc->ceiling_color);
 // 			k++;
 // 		}
 // 		j++;
@@ -169,7 +178,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 				// 	m = 0;
 // 				// 	while (x + m < x + draw_size_fixed)
 // 				// 	{
-// 				// 		mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m, y + l, desc->floor_color);
+// 				// 		mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m, y + l, desc->floor_color);
 // 				// 		m++;
 // 				// 	}
 // 				// 	l++;
@@ -192,7 +201,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 				// 	// printf("%d, %d, %d, %d, %d\n", y + draw_size_fixed / 2, x + draw_size_fixed / 2,draw_size_fixed / 2, draw_size_fixed, draw_size_fixed/4);
 // 				// 	while (x + m < x + draw_size_fixed / 2)
 // 				// 	{
-// 				// 		mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 0);
+// 				// 		mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 0);
 // 				// 		m++;
 // 				// 	}
 // 				// 	l++;
@@ -208,7 +217,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 				// 	m = 0;
 // 				// 	while (x + m < x + draw_size_fixed)
 // 				// 	{
-// 				// 		mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m, y + l, desc->ceiling_color);
+// 				// 		mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m, y + l, desc->ceiling_color);
 // 				// 		m++;
 // 				// 	}
 // 				// 	l++;
@@ -231,7 +240,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 		// printf("%d, %d, %d, %d, %d\n", y + draw_size_fixed / 2, x + draw_size_fixed / 2,draw_size_fixed / 2, draw_size_fixed, draw_size_fixed/4);
 // 		while (x + m < x + draw_size_fixed / 2)
 // 		{
-// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 16711680);
+// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 16711680);
 // 			m++;
 // 		}
 // 		l++;
@@ -273,7 +282,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 					m = 0;
 // 					while (x + m < x + draw_size_fixed)
 // 					{
-// 						mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m, y + l, desc->floor_color);
+// 						mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m, y + l, desc->floor_color);
 // 						m++;
 // 					}
 // 					l++;
@@ -289,7 +298,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 					m = 0;
 // 					while (x + m < x + draw_size_fixed)
 // 					{
-// 						mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m, y + l, desc->ceiling_color);
+// 						mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m, y + l, desc->ceiling_color);
 // 						m++;
 // 					}
 // 					l++;
@@ -308,7 +317,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 		m = 0;
 // 		while (x + m < x + draw_size_fixed / 2)
 // 		{
-// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 0);
+// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 0);
 // 			m++;
 // 		}
 // 		l++;
@@ -322,7 +331,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 		m = 0;
 // 		while (x + m < x + draw_size_fixed / 2)
 // 		{
-// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.mlx_win, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 16711680);
+// 			mlx_pixel_put(mlx_data.mlx_ptr, mlx_data.win_ptr, x + m + draw_size_fixed / 4, y + l + draw_size_fixed / 4, 16711680);
 // 			m++;
 // 		}
 // 		l++;
@@ -334,8 +343,8 @@ void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pi
 {
 	int j;
 	int x;
-	double pos_y = mlx_data.desc->play_pos.x;
-	double pos_x = mlx_data.desc->play_pos.y;
+	double pos_y = mlx_data.desc->play_pos.y;
+	double pos_x = mlx_data.desc->play_pos.x;
 	int color_tab[3];
 	
 	j = 0;
@@ -345,7 +354,6 @@ void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pi
 		double camera_x = 2 * x / (double)desc.x - 1;
 		double raydir_x = mlx_data.desc->dir_pos.x + mlx_data.desc->dir_pos.plane_x * camera_x;
 		double raydir_y = mlx_data.desc->dir_pos.y + mlx_data.desc->dir_pos.plane_y * camera_x;
-
 		int map_x = (int)pos_x;
 		int map_y = (int)pos_y;
 		double sidedist_x;
@@ -415,13 +423,13 @@ void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pi
 		if (side == 1)
 			color = color / 2;
 		color_tab[0] = color / 65536;
-		printf("%d,", color / 65536);
+		// printf("%d,", color / 65536);
 		color = color - (color / 65536) * 65536;//sans red
 		color_tab[1] = color / 256;
-		printf("%d,", color / 256);
+		// printf("%d,", color / 256);
 		color = color - (color / 256) * 256; // sans vert
 		color_tab[2] = color;
-		printf("%d\n", color);
+		// printf("%d\n", color);
 		j = 0;
 		while (j < draw_start)
 		{
@@ -450,15 +458,12 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 	double play_y;
 	double decalage_x;
 	double decalage_y;
+	double camera_move_angle;
 	if (key == 53)
-	{
-		mlx_destroy_window(mlx_data->mlx_ptr, mlx_data->mlx_win);
-		ft_freer(mlx_data->desc);
-		system("leaks Cub3D");
-		exit(0);
-	}
+		ft_exit_hook(mlx_data);
 	else if(key == 123)//arrow left
 	{
+		camera_move_angle = (M_PI/180) * 10;
 		// play_x = mlx_data->desc->play_pos.x;
 		// play_y = mlx_data->desc->play_pos.y;
 		// x = mlx_data->desc->dir_pos.x + play_x;
@@ -477,16 +482,17 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		// // ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_base(*mlx_data);
 		double old_dir_x = mlx_data->desc->dir_pos.x;
-		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(0.1) - mlx_data->desc->dir_pos.y * sin(0.1);
-		mlx_data->desc->dir_pos.y = old_dir_x * sin(0.1) + mlx_data->desc->dir_pos.y * cos(0.1);
+		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(camera_move_angle) - mlx_data->desc->dir_pos.y * sin(camera_move_angle);
+		mlx_data->desc->dir_pos.y = old_dir_x * sin(camera_move_angle) + mlx_data->desc->dir_pos.y * cos(camera_move_angle);
 		double old_plane_x = mlx_data->desc->dir_pos.plane_x;
-		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(0.1) - mlx_data->desc->dir_pos.plane_y * sin(0.1);
-		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(0.1) + mlx_data->desc->dir_pos.plane_y * cos(0.1);
+		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(camera_move_angle) - mlx_data->desc->dir_pos.plane_y * sin(camera_move_angle);
+		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(camera_move_angle) + mlx_data->desc->dir_pos.plane_y * cos(camera_move_angle);
 		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
-		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->mlx_win, mlx_data->img_ptr, 0, 0);
+		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
 	}
 	else if(key == 124)//arrow right
 	{
+		camera_move_angle = (M_PI/180) * 10;
 		// play_x = mlx_data->desc->play_pos.x;
 		// play_y = mlx_data->desc->play_pos.y;
 		// x = mlx_data->desc->dir_pos.x + play_x;
@@ -505,56 +511,73 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		// // ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_base(*mlx_data);
 		double old_dir_x = mlx_data->desc->dir_pos.x;
-		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(-0.1) - mlx_data->desc->dir_pos.y * sin(-0.1);
-		mlx_data->desc->dir_pos.y = old_dir_x * sin(-0.1) + mlx_data->desc->dir_pos.y * cos(-0.1);
+		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(-camera_move_angle) - mlx_data->desc->dir_pos.y * sin(-camera_move_angle);
+		mlx_data->desc->dir_pos.y = old_dir_x * sin(-camera_move_angle) + mlx_data->desc->dir_pos.y * cos(-camera_move_angle);
 		double old_plane_x = mlx_data->desc->dir_pos.plane_x;
-		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(-0.1) - mlx_data->desc->dir_pos.plane_y * sin(-0.1);
-		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(-0.1) + mlx_data->desc->dir_pos.plane_y * cos(-0.1);
+		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(-camera_move_angle) - mlx_data->desc->dir_pos.plane_y * sin(-camera_move_angle);
+		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(-camera_move_angle) + mlx_data->desc->dir_pos.plane_y * cos(-camera_move_angle);
 		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
-		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->mlx_win, mlx_data->img_ptr, 0, 0);
+		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+	}
+	else if (key == 6 || key == 13)//move up
+	{
+		// mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - 2;
+		// mlx_data->desc->dir_pos.y = mlx_data->desc->dir_pos.y - 2;
+		// ft_redraw_map(mlx_data->desc, *mlx_data);
+		// ft_draw_base(*mlx_data);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.5, mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.5, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.5)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.5)]);
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.5)][(int)mlx_data->desc->play_pos.y] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.5;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.5)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.5;
+		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+	}
+	else if (key == 1)//down
+	{
+		// mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + 2;
+		// mlx_data->desc->dir_pos.y = mlx_data->desc->dir_pos.y + 2;
+		// ft_redraw_map(mlx_data->desc, *mlx_data);
+		// ft_draw_base(*mlx_data);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.5, mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.5, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.5)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.5)]);
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.5)][(int)mlx_data->desc->play_pos.y] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.5;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.5)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.5;
+		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
 	}
 	else if (key == 0 || key == 12)//move left
 	{
 		// mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - 2;
 		// mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x - 2;
 		// ft_redraw_map(mlx_data->desc, *mlx_data);
-		
 		// ft_draw_walls(*(mlx_data->desc), *mlx_data);
-	}
-	else if (key == 6 || key == 13)//move up
-	{
-		// mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - 2;
-		// mlx_data->desc->dir_pos.y = mlx_data->desc->dir_pos.y - 2;
-		// // ft_redraw_map(mlx_data->desc, *mlx_data);
-		// ft_draw_base(*mlx_data);
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * 1)][(int)mlx_data->desc->play_pos.x] == '0')
-			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * 1;
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y)][(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * 1)] == '0')
-			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * 1;
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.5, mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.5, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.5)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.5)]);
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * 0.5)][(int)mlx_data->desc->play_pos.y] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * 0.5;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * 0.5)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * 0.5;
 		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
-		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->mlx_win, mlx_data->img_ptr, 0, 0);
-	}
-	else if (key == 1)//down
-	{
-		// mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + 2;
-		// mlx_data->desc->dir_pos.y = mlx_data->desc->dir_pos.y + 2;
-		// // ft_redraw_map(mlx_data->desc, *mlx_data);
-		// ft_draw_base(*mlx_data);
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * 1)][(int)mlx_data->desc->play_pos.x] == '0')
-			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * 1;
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y)][(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * 1)] == '0')
-			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * 1;
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
-		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->mlx_win, mlx_data->img_ptr, 0, 0);
+		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
 	}
 	else if (key == 2)//right
 	{
 		// mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + 2;
 		// mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x + 2;
-		// // ft_redraw_map(mlx_data->desc, *mlx_data);
-
-
+		// ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_walls(*(mlx_data->desc), *mlx_data);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
+		printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.5, mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.5, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.5)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.5)]);
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * 0.5)][(int)mlx_data->desc->play_pos.y] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * 0.5;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * 0.5)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * 0.5;
+		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
 	}
 	// printf("%d\n", key);
 	return (0);
@@ -571,27 +594,25 @@ int		main(int argc, char **argv)
 	ft_print_desc(&desc);
 	ft_print_map(&desc);
 	mlx_data.desc = &desc;
-	if (!(mlx_data.mlx_ptr = mlx_init()))
+	if (!(mlx_data.mlx_ptr = mlx_init()) || !(mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")))
 	{
 		write(1, "error\n", 6);
 		return (-1);		
 	}
-	if ((mlx_data.mlx_win = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")) == NULL)
-	{
-		write(1, "error\n", 6);
-		return (-1);
-	}
-	mlx_key_hook(mlx_data.mlx_win, ft_key_pressed, &mlx_data);
-	// mlx_mouse_hook(mlx_data.mlx_win, ft_mouse_pressed, (void *)0);
-	// mlx_expose_hook(mlx_data.mlx_win, ft_pressed, &mlx_data);
-	// mlx_expose_hook(mlx_data.mlx_win, ft_pressed, &mlx_data);
+	// if ((mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")) == NULL)
+	// {
+	// 	write(1, "error\n", 6);
+	// 	return (-1);
+	// }
+	mlx_key_hook(mlx_data.win_ptr, ft_key_pressed, &mlx_data);
 	// if ((ft_display_map(&desc, mlx_data)) == -1)
 	// 	return (-1);
 	ft_print_desc(&desc);
 	mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
 	mlx_data.data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.bits_per_pixel, &mlx_data.size_line, &mlx_data.endian);
 	ft_draw_walls(desc, mlx_data, mlx_data.data, mlx_data.bits_per_pixel, mlx_data.size_line, mlx_data.endian);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.mlx_win, mlx_data.img_ptr, 0, 0);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
+	mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);//bouton X pour quitter
 	mlx_loop(mlx_data.mlx_ptr);
 	return (1);
 }

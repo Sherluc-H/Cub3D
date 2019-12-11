@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/10 17:32:10 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/11 14:43:43 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ typedef struct	s_desc
 typedef struct	s_mlx_data
 {
 	void *mlx_ptr;
-	void *mlx_win;
+	void *win_ptr;
 	void *img_ptr;
 	char *data;
 	int bits_per_pixel;

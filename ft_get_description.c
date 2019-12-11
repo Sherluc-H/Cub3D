@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/10 11:20:32 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/11 18:04:53 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,18 +139,18 @@ int		ft_check_file_content(char *str, t_desc *desc)
 	int		i;
 	int		j;
 	int		k;
-	int		l;
+	int		y;
 	int		player_found;
 	int		first_line;
-	int		row;
+	int		x;
 
-	row = 0;
+	x = 0;
 	player_found = 0;
 	first_line = 1;
 	i = 0;
 	j = 0;
 	k = 0;
-	l = 0;
+	y = 0;
 	while (str[i])
 	{
 		if (str[i] == 'R' && desc->resolution_ok == 0)
@@ -181,7 +181,7 @@ int		ft_check_file_content(char *str, t_desc *desc)
 			while (str[i] && ft_is_scene_ok(str, i))
 			{
 				if (str[i] == '\n')
-					row++;
+					x++;
 				if (ft_is_player_start(str[i]) && player_found)
 					return (0);
 				if (ft_is_player_start(str[i]))
@@ -226,46 +226,47 @@ int		ft_check_file_content(char *str, t_desc *desc)
 			}
 			if (str[i] == '\0' && str[i - 1] == '1')
 			{
-				row++;
-				desc->scene = malloc(sizeof(char *) * (row + 1));
-				row = 0;
+				x++;
+				desc->scene = malloc(sizeof(char *) * (x + 1));
+				x = 0;
 				i = i - j;
 				while (str[i] && ft_is_scene_ok(str, i))
 				{
 					k = 0;
 					j = 0;
-					l = 0;
+					y = 0;
 					while (str[i + j] != '\n' && str[i + j] != '\0')
 					{
 						if (str[i + j] != ' ')
-							l++;
+							y++;
 						j++;
 					}
-					desc->scene[row] = malloc(sizeof(char) * (l + 1));
-					l = 0;
+					desc->scene[x] = malloc(sizeof(char) * (y + 1));
+					y = 0;
 					while (k < j)
 					{
 						if (ft_is_player_start(str[i]))
 						{
-							desc->play_pos.x = l;
-							desc->play_pos.y = row;
-							desc->scene[row][l] = '0';
-							l++;
+							desc->play_pos.x = x + 0.5;
+							desc->play_pos.y = y + 0.5;
+							printf("x = %f, y = %f", desc->play_pos.x, desc->play_pos.y);
+							desc->scene[x][y] = '0';
+							y++;
 						}
 						else if (str[i] != ' ')
 						{
-							desc->scene[row][l] = str[i];
-							l++;
+							desc->scene[x][y] = str[i];
+							y++;
 						}
 						i++;
 						k++;
 					}
-					desc->scene[row][l] = '\0';
+					desc->scene[x][y] = '\0';
 					if (str[i] == '\n' || str[i] == '\0')
-						row++;
+						x++;
 					i++;
 				}
-				desc->scene[row] = NULL;
+				desc->scene[x] = NULL;
 				if (!(ft_check_scene(desc)))
 					return (0);
 				free(str);
