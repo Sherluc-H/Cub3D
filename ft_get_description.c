@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/11 18:04:53 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/14 13:26:47 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,10 @@ int		ft_parse_resolution(char *str, t_desc *desc, int *i)
 		return (0);
 	if ((desc->y = ft_get_number(str, i)) == -1)
 		return (0);
+	if (desc->x > 2560)
+		desc->x = 2560;
+	if (desc->y > 1440)
+		desc->y = 1440;
 	desc->resolution_ok = 1;
 	if (!(ft_end_identifier(str, i)))
 		return (0);
@@ -249,7 +253,7 @@ int		ft_check_file_content(char *str, t_desc *desc)
 						{
 							desc->play_pos.x = x + 0.5;
 							desc->play_pos.y = y + 0.5;
-							printf("x = %f, y = %f", desc->play_pos.x, desc->play_pos.y);
+							printf("x = %f, y = %f\n", desc->play_pos.x, desc->play_pos.y);
 							desc->scene[x][y] = '0';
 							y++;
 						}
