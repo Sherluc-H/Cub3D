@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/11 14:43:43 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/14 18:11:02 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,28 @@
 #  define BUFFER_SIZE 100
 # endif
 
+# define RED 16711680
+# define BLUE 255
+# define GREEN 65280
+# define BLACK 0
+# define WHITE 16777215
+# define KEY_A 0
+# define KEY_Q 12
+# define KEY_D 2
+# define KEY_W 13
+# define KEY_Z 6
+# define KEY_S 1
+# define KEY_LEFT 123
+# define KEY_RIGHT 124
+# define KEY_ESC 53
+# define KEY_SPACE 49
+
 typedef struct	s_dir_pos
 {
 	double x;
 	double y;
 	double plane_x;
 	double plane_y;
-	double angle;
 }				t_dir_pos;
 
 typedef struct	s_player_pos
@@ -39,6 +54,20 @@ typedef struct	s_player_pos
 	double x;
 	double y;
 }				t_player_pos;
+
+typedef struct	s_image_data
+{
+	char *data;
+	int bits_per_pixel;
+	int size_line;
+	int endian;
+}				t_image_data;
+
+typedef struct	s_texture_data
+{
+	char *path;
+	t_image_data image_data;
+}				t_texture_data;
 
 typedef struct	s_desc
 {

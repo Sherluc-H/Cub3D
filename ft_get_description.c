@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/14 13:26:47 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/14 13:39:14 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,38 +185,38 @@ int		ft_check_file_content(char *str, t_desc *desc)
 			while (str[i] && ft_is_scene_ok(str, i))
 			{
 				if (str[i] == '\n')
-					x++;
+					y++;
 				if (ft_is_player_start(str[i]) && player_found)
 					return (0);
 				if (ft_is_player_start(str[i]))
 				{
 					if (str[i] == 'N')
 					{
-						desc->dir_pos.x = -1;
-						desc->dir_pos.y = 0;
-						desc->dir_pos.plane_x = 0;
-						desc->dir_pos.plane_y = 0.66;
+						desc->dir_pos.x = 0;
+						desc->dir_pos.y = -1;
+						desc->dir_pos.plane_x = 0.66;
+						desc->dir_pos.plane_y = 0;
 					}
 					else if(str[i] == 'S')
 					{
-						desc->dir_pos.x = 1;
+						desc->dir_pos.x = 0;
+						desc->dir_pos.y = 1;
+						desc->dir_pos.plane_x = -0.66;
+						desc->dir_pos.plane_y = 0;
+					}
+					else if(str[i] == 'W')
+					{
+						desc->dir_pos.x = -1;
 						desc->dir_pos.y = 0;
 						desc->dir_pos.plane_x = 0;
 						desc->dir_pos.plane_y = -0.66;
 					}
-					else if(str[i] == 'W')
-					{
-						desc->dir_pos.x = 0;
-						desc->dir_pos.y = -1;
-						desc->dir_pos.plane_x = -0.66;
-						desc->dir_pos.plane_y = 0;
-					}
 					else if(str[i] == 'E')
 					{
-						desc->dir_pos.x = 0;
-						desc->dir_pos.y = 1;
-						desc->dir_pos.plane_x = 0.66;
-						desc->dir_pos.plane_y = 0;
+						desc->dir_pos.x = 1;
+						desc->dir_pos.y = 0;
+						desc->dir_pos.plane_x = 0;
+						desc->dir_pos.plane_y = 0.66;
 					}
 					player_found = 1;
 				}
@@ -230,23 +230,23 @@ int		ft_check_file_content(char *str, t_desc *desc)
 			}
 			if (str[i] == '\0' && str[i - 1] == '1')
 			{
-				x++;
-				desc->scene = malloc(sizeof(char *) * (x + 1));
-				x = 0;
+				y++;
+				desc->scene = malloc(sizeof(char *) * (y + 1));
+				y = 0;
 				i = i - j;
 				while (str[i] && ft_is_scene_ok(str, i))
 				{
 					k = 0;
 					j = 0;
-					y = 0;
+					x = 0;
 					while (str[i + j] != '\n' && str[i + j] != '\0')
 					{
 						if (str[i + j] != ' ')
-							y++;
+							x++;
 						j++;
 					}
-					desc->scene[x] = malloc(sizeof(char) * (y + 1));
-					y = 0;
+					desc->scene[y] = malloc(sizeof(char) * (x + 1));
+					x = 0;
 					while (k < j)
 					{
 						if (ft_is_player_start(str[i]))
@@ -254,23 +254,23 @@ int		ft_check_file_content(char *str, t_desc *desc)
 							desc->play_pos.x = x + 0.5;
 							desc->play_pos.y = y + 0.5;
 							printf("x = %f, y = %f\n", desc->play_pos.x, desc->play_pos.y);
-							desc->scene[x][y] = '0';
-							y++;
+							desc->scene[y][x] = '0';
+							x++;
 						}
 						else if (str[i] != ' ')
 						{
-							desc->scene[x][y] = str[i];
-							y++;
+							desc->scene[y][x] = str[i];
+							x++;
 						}
 						i++;
 						k++;
 					}
-					desc->scene[x][y] = '\0';
+					desc->scene[y][x] = '\0';
 					if (str[i] == '\n' || str[i] == '\0')
-						x++;
+						y++;
 					i++;
 				}
-				desc->scene[x] = NULL;
+				desc->scene[y] = NULL;
 				if (!(ft_check_scene(desc)))
 					return (0);
 				free(str);

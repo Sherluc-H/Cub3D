@@ -6,16 +6,13 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/14 13:26:49 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/14 18:09:56 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
-# define RED 16711680
-# define BLUE 255
-# define GREEN 65280
-# define BLACK 0
-# define WHITE 16777215
+# define ROTATION_ANGLE 10
+# define MOVE_DIST 0.1
 
 void	ft_init_desc(t_desc *desc)
 {
@@ -38,7 +35,6 @@ void	ft_init_desc(t_desc *desc)
 	desc->play_pos.y = 0.;
 	desc->dir_pos.x = 0.;
 	desc->dir_pos.y = 0.;
-	desc->dir_pos.angle = 0.;
 }
 void	ft_freer(t_desc *desc)
 {
@@ -111,7 +107,7 @@ void ft_print_map(t_desc *desc)
 	printf("---END---\n");
 }
 
-void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size_line, int x, int y, int color_tab[3])
+void	ft_put_pixel_to_image(t_mlx_data mlx_data, int x, int y, int color_tab[3])
 {
 	unsigned char r;
 	unsigned char g;
@@ -120,9 +116,9 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 	r = (unsigned char)(color_tab[0]);
 	g = (unsigned char)(color_tab[1]);
 	b = (unsigned char)(color_tab[2]);
-	data[y * size_line + x * bits_per_pixel / 8 + 2] = r;
-	data[y * size_line + x * bits_per_pixel / 8 + 1] = g;
-	data[y * size_line + x * bits_per_pixel / 8 + 0] = b;
+	mlx_data.data[y * mlx_data.size_line + x * mlx_data.bits_per_pixel / 8 + 2] = r;
+	mlx_data.data[y * mlx_data.size_line + x * mlx_data.bits_per_pixel / 8 + 1] = g;
+	mlx_data.data[y * mlx_data.size_line + x * mlx_data.bits_per_pixel / 8 + 0] = b;
 	// if (y == 0)
 	// {
 	// printf("->%d, %d, %d | %d, %d, %d\n", y * size_line + x * bits_per_pixel / 8, y * size_line + x * bits_per_pixel / 8 + 1, y * size_line + x * bits_per_pixel / 8 + 2, r, g, b);
@@ -132,6 +128,31 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 	// printf("->%d, %d, %d | %d, %d, %d\n", y * size_line + x * bits_per_pixel / 8, y * size_line + x * bits_per_pixel / 8 + 1, y * size_line + x * bits_per_pixel / 8 + 2, r, g, b);
 
 	// }
+}
+
+void ft_display_texture_top(t_mlx_data mlx_data)
+{
+	int north_height;
+	int north_width;
+	int south_height;
+	int south_width;
+	int west_height;
+	int west_width;
+	int east_height;
+	int east_width;
+	int sprite_height;
+	int sprite_width;
+
+	void *north_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->north, &north_width, &north_height);
+	void *south_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->south, &south_width, &south_height);
+	void *west_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->west, &west_width, &west_height);
+	void *east_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->east, &east_width, &east_height);
+	void *sprite_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->sprite, &sprite_width, &sprite_height);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, north_image_ptr, 0, 0);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, south_image_ptr, north_width, 0);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, west_image_ptr, north_width + south_width, 0);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, east_image_ptr, north_width + south_width + west_width, 0);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, sprite_image_ptr, north_width + south_width + west_width + east_width, 0);
 }
 
 // int ft_display_map(t_desc *desc, t_mlx_data mlx_data)
@@ -339,7 +360,7 @@ void	ft_put_pixel_to_image(t_desc desc, char *data, int bits_per_pixel, int size
 // 	return (1);
 // }
 
-void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pixel, int size_line, int endian)
+void ft_draw_walls(t_mlx_data mlx_data)
 {
 	int j;
 	int x;
@@ -349,9 +370,9 @@ void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pi
 	
 	j = 0;
 	x = 0;
-	while (x < desc.x)
+	while (x < mlx_data.desc->x)
 	{
-		double camera_x = 2 * x / (double)desc.x - 1;
+		double camera_x = 2 * x / (double)mlx_data.desc->x - 1;
 		double raydir_x = mlx_data.desc->dir_pos.x + mlx_data.desc->dir_pos.plane_x * camera_x;
 		double raydir_y = mlx_data.desc->dir_pos.y + mlx_data.desc->dir_pos.plane_y * camera_x;
 		int map_x = (int)pos_x;
@@ -399,24 +420,24 @@ void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pi
 				map_y += step_y;
 				side = 1;				
 			}
-			if (mlx_data.desc->scene[map_x][map_y] > '0')
+			if (mlx_data.desc->scene[map_y][map_x] > '0')
 				hit = 1;
 		}
 		if (side == 0)
 			perpwalldist = (map_x - pos_x + (1 - step_x) / 2) / raydir_x;
 		else
 			perpwalldist = (map_y - pos_y + (1 - step_y) / 2) / raydir_y;
-		int line_height = (int)(desc.y / perpwalldist);
-		int draw_start = -line_height / 2 + desc.y/2;
+		int line_height = (int)(mlx_data.desc->y / perpwalldist);
+		int draw_start = -line_height / 2 + mlx_data.desc->y/2;
 		if(draw_start < 0)
 			draw_start = 0;
-		int draw_end = line_height / 2 + desc.y /2;
-		if (draw_end >= desc.y)
-			draw_end = desc.y - 1;
+		int draw_end = line_height / 2 + mlx_data.desc->y /2;
+		if (draw_end >= mlx_data.desc->y)
+			draw_end = mlx_data.desc->y - 1;
 		int color = 0;
-		if (desc.scene[map_x][map_y] == '1')
+		if (mlx_data.desc->scene[map_y][map_x] == '1')
 			color = RED;
-		else if (desc.scene[map_x][map_y] == '2')
+		else if (mlx_data.desc->scene[map_y][map_x] == '2')
 			color = GREEN;
 		else
 			color = WHITE;
@@ -433,17 +454,17 @@ void ft_draw_walls(t_desc desc, t_mlx_data mlx_data, char *data, int bits_per_pi
 		j = 0;
 		while (j < draw_start)
 		{
-			ft_put_pixel_to_image(desc, data, bits_per_pixel, size_line, x, j, desc.ceiling_tab);
+			ft_put_pixel_to_image(mlx_data, x, j, mlx_data.desc->ceiling_tab);
 			j++;
 		}
 		while (j < draw_end)
 		{
-			ft_put_pixel_to_image(desc, data, bits_per_pixel, size_line, x, j, color_tab);
+			ft_put_pixel_to_image(mlx_data, x, j, color_tab);
 			j++;
 		}
-		while (j < desc.y)
+		while (j < mlx_data.desc->y)
 		{
-			ft_put_pixel_to_image(desc, data, bits_per_pixel, size_line, x, j, desc.floor_tab);
+			ft_put_pixel_to_image(mlx_data, x, j, mlx_data.desc->floor_tab);
 			j++;
 		}
 		x++;
@@ -458,12 +479,12 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 	double play_y;
 	double decalage_x;
 	double decalage_y;
-	double camera_move_angle;
-	if (key == 53)
+	double camera_rot_angle;
+	if (key == KEY_ESC)
 		ft_exit_hook(mlx_data);
-	else if(key == 123)//arrow left
+	else if(key == KEY_LEFT)//arrow left
 	{
-		camera_move_angle = (M_PI/180) * 10;
+		camera_rot_angle = (M_PI/180) * ROTATION_ANGLE;
 		// play_x = mlx_data->desc->play_pos.x;
 		// play_y = mlx_data->desc->play_pos.y;
 		// x = mlx_data->desc->dir_pos.x + play_x;
@@ -481,18 +502,23 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		// // printf("%f\n", mlx_data->desc->dir_pos.y);
 		// // ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_base(*mlx_data);
+		// printf("camera angle %f\n", -camera_rot_angle);
+		// printf("dir x %f\n", mlx_data->desc->dir_pos.x);
+		// printf("dir y %f\n", mlx_data->desc->dir_pos.y);
+
 		double old_dir_x = mlx_data->desc->dir_pos.x;
-		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(camera_move_angle) - mlx_data->desc->dir_pos.y * sin(camera_move_angle);
-		mlx_data->desc->dir_pos.y = old_dir_x * sin(camera_move_angle) + mlx_data->desc->dir_pos.y * cos(camera_move_angle);
+		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(-camera_rot_angle) - mlx_data->desc->dir_pos.y * sin(-camera_rot_angle);
+		mlx_data->desc->dir_pos.y = old_dir_x * sin(-camera_rot_angle) + mlx_data->desc->dir_pos.y * cos(-camera_rot_angle);
 		double old_plane_x = mlx_data->desc->dir_pos.plane_x;
-		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(camera_move_angle) - mlx_data->desc->dir_pos.plane_y * sin(camera_move_angle);
-		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(camera_move_angle) + mlx_data->desc->dir_pos.plane_y * cos(camera_move_angle);
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(-camera_rot_angle) - mlx_data->desc->dir_pos.plane_y * sin(-camera_rot_angle);
+		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(-camera_rot_angle) + mlx_data->desc->dir_pos.plane_y * cos(-camera_rot_angle);
+		ft_draw_walls(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+		ft_display_texture_top(*mlx_data);
 	}
-	else if(key == 124)//arrow right
+	else if(key == KEY_RIGHT)//arrow right
 	{
-		camera_move_angle = (M_PI/180) * 10;
+		camera_rot_angle = (M_PI/180) * ROTATION_ANGLE;
 		// play_x = mlx_data->desc->play_pos.x;
 		// play_y = mlx_data->desc->play_pos.y;
 		// x = mlx_data->desc->dir_pos.x + play_x;
@@ -511,75 +537,80 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		// // ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_base(*mlx_data);
 		double old_dir_x = mlx_data->desc->dir_pos.x;
-		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(-camera_move_angle) - mlx_data->desc->dir_pos.y * sin(-camera_move_angle);
-		mlx_data->desc->dir_pos.y = old_dir_x * sin(-camera_move_angle) + mlx_data->desc->dir_pos.y * cos(-camera_move_angle);
+		mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x * cos(camera_rot_angle) - mlx_data->desc->dir_pos.y * sin(camera_rot_angle);
+		mlx_data->desc->dir_pos.y = old_dir_x * sin(camera_rot_angle) + mlx_data->desc->dir_pos.y * cos(camera_rot_angle);
 		double old_plane_x = mlx_data->desc->dir_pos.plane_x;
-		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(-camera_move_angle) - mlx_data->desc->dir_pos.plane_y * sin(-camera_move_angle);
-		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(-camera_move_angle) + mlx_data->desc->dir_pos.plane_y * cos(-camera_move_angle);
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		mlx_data->desc->dir_pos.plane_x = mlx_data->desc->dir_pos.plane_x * cos(camera_rot_angle) - mlx_data->desc->dir_pos.plane_y * sin(camera_rot_angle);
+		mlx_data->desc->dir_pos.plane_y = old_plane_x * sin(camera_rot_angle) + mlx_data->desc->dir_pos.plane_y * cos(camera_rot_angle);
+		ft_draw_walls(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+		ft_display_texture_top(*mlx_data);
 	}
-	else if (key == 6 || key == 13)//move up
+	else if (key == KEY_W || key == KEY_Z)//move up
 	{
 		// mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - 2;
 		// mlx_data->desc->dir_pos.y = mlx_data->desc->dir_pos.y - 2;
 		// ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_base(*mlx_data);
 		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
-		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.1, mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.1, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.1)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.1)]);
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.11)][(int)mlx_data->desc->play_pos.y] == '0')
-			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.1;
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.11)] == '0')
-			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.1;
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * MOVE_DIST, mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * MOVE_DIST, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * MOVE_DIST)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * MOVE_DIST)]);
+		if (mlx_data->desc->scene[(int)mlx_data->desc->play_pos.y][(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * MOVE_DIST;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))][(int)(mlx_data->desc->play_pos.x)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * MOVE_DIST;
+		ft_draw_walls(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+		ft_display_texture_top(*mlx_data);
 	}
-	else if (key == 1)//down
+	else if (key == KEY_S)//down
 	{
 		// mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + 2;
 		// mlx_data->desc->dir_pos.y = mlx_data->desc->dir_pos.y + 2;
 		// ft_redraw_map(mlx_data->desc, *mlx_data);
 		// ft_draw_base(*mlx_data);
 		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
-		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.1, mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.1, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.1)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.1)]);
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.11)][(int)mlx_data->desc->play_pos.y] == '0')
-			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.1;
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.11)] == '0')
-			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.1;
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * MOVE_DIST, mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * MOVE_DIST, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * MOVE_DIST)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * MOVE_DIST)]);
+		if (mlx_data->desc->scene[(int)mlx_data->desc->play_pos.y][(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * MOVE_DIST;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))][(int)(mlx_data->desc->play_pos.x)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * MOVE_DIST;
+		ft_draw_walls(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+		ft_display_texture_top(*mlx_data);
 	}
-	else if (key == 0 || key == 12)//move left
+	else if (key == KEY_A || key == KEY_Q)//move left
 	{
 		// mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - 2;
 		// mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x - 2;
 		// ft_redraw_map(mlx_data->desc, *mlx_data);
-		// ft_draw_walls(*(mlx_data->desc), *mlx_data);
+		// ft_draw_walls(*mlx_data);
 		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
-		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.1, mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.1, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * 0.1)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * 0.1)]);
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * 0.11)][(int)mlx_data->desc->play_pos.y] == '0')
-			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * 0.1;
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * 0.11)] == '0')
-			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * 0.1;
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * MOVE_DIST, mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * MOVE_DIST, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * MOVE_DIST)][(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * MOVE_DIST)]);
+		if (mlx_data->desc->scene[(int)mlx_data->desc->play_pos.y][(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * MOVE_DIST;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))][(int)(mlx_data->desc->play_pos.x)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * MOVE_DIST;
+		ft_draw_walls(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+		ft_display_texture_top(*mlx_data);
 	}
-	else if (key == 2)//right
+	else if (key == KEY_D)//right
 	{
 		// mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + 2;
 		// mlx_data->desc->dir_pos.x = mlx_data->desc->dir_pos.x + 2;
 		// ft_redraw_map(mlx_data->desc, *mlx_data);
-		// ft_draw_walls(*(mlx_data->desc), *mlx_data);
+		// ft_draw_walls(*mlx_data);
 		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x, mlx_data->desc->play_pos.y, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y)]);
-		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.1, mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.1, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * 0.1)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * 0.1)]);
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * 0.11)][(int)mlx_data->desc->play_pos.y] == '0')
-			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * 0.1;
-		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * 0.11)] == '0')
-			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * 0.1;
-		ft_draw_walls(*(mlx_data->desc), *mlx_data, mlx_data->data, mlx_data->bits_per_pixel, mlx_data->size_line, mlx_data->endian);
+		// printf("x = %f, y = %f, |%c|\n", mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * MOVE_DIST, mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * MOVE_DIST, mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * MOVE_DIST)][(int)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * MOVE_DIST)]);
+		if (mlx_data->desc->scene[(int)mlx_data->desc->play_pos.y][(int)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))] == '0')
+			mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * MOVE_DIST;
+		if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))][(int)(mlx_data->desc->play_pos.x)] == '0')
+			mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * MOVE_DIST;
+		ft_draw_walls(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
+		ft_display_texture_top(*mlx_data);
 	}
-	// printf("%d\n", key);
+	printf("key pressed = %d\n", key);
 	return (0);
 }
 
@@ -599,20 +630,16 @@ int		main(int argc, char **argv)
 		write(1, "error\n", 6);
 		return (-1);		
 	}
-	// if ((mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")) == NULL)
-	// {
-	// 	write(1, "error\n", 6);
-	// 	return (-1);
-	// }
 	// mlx_key_hook(mlx_data.win_ptr, ft_key_pressed, &mlx_data);
 	// if ((ft_display_map(&desc, mlx_data)) == -1)
 	// 	return (-1);
 	ft_print_desc(&desc);
 	mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
 	mlx_data.data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.bits_per_pixel, &mlx_data.size_line, &mlx_data.endian);
-	ft_draw_walls(desc, mlx_data, mlx_data.data, mlx_data.bits_per_pixel, mlx_data.size_line, mlx_data.endian);
+	ft_draw_walls(mlx_data);
 	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
 	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
+	ft_display_texture_top(mlx_data);
 	mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
 	mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);//bouton X pour quitter
 	mlx_loop(mlx_data.mlx_ptr);
