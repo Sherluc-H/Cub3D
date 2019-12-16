@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/16 16:50:08 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/16 18:01:00 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,14 +110,11 @@ void ft_print_map(t_desc *desc)
 
 void ft_get_color_tab(int color, int color_tab[3])
 {
-	// int color_tab[3];
-
 	color_tab[0] = color / 65536;
 	color = color - (color / 65536) * 65536;//sans red
 	color_tab[1] = color / 256;
 	color = color - (color / 256) * 256; // sans vert
 	color_tab[2] = color;
-	// return (color_tab);
 }
 
 void	ft_put_pixel_to_image(t_mlx_data mlx_data, int x, int y, int color_tab[3])
@@ -142,39 +139,33 @@ void	ft_put_pixel_to_image(t_mlx_data mlx_data, int x, int y, int color_tab[3])
 	// }
 }
 
+int ft_init_texture(t_mlx_data *mlx_data)
+{
+	if (!(mlx_data->t_north.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->north, &(mlx_data->t_north.width), &(mlx_data->t_north.height))))
+		return (-1);
+	if (!(mlx_data->t_south.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->south, &(mlx_data->t_south.width), &(mlx_data->t_south.height))))
+		return (-1);
+	if (!(mlx_data->t_west.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->west, &(mlx_data->t_west.width), &(mlx_data->t_west.height))))
+		return (-1);
+	if (!(mlx_data->t_east.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->east, &(mlx_data->t_east.width), &(mlx_data->t_east.height))))
+		return (-1);
+	if (!(mlx_data->t_sprite.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->sprite, &(mlx_data->t_sprite.width), &(mlx_data->t_sprite.height))))
+		return (-1);
+	mlx_data->t_north.image_data.data = mlx_get_data_addr(mlx_data->img_ptr, &(mlx_data->t_north.image_data.bits_per_pixel), &(mlx_data->t_north.image_data.size_line), &(mlx_data->t_north.image_data.endian));
+	mlx_data->t_south.image_data.data = mlx_get_data_addr(mlx_data->img_ptr, &(mlx_data->t_south.image_data.bits_per_pixel), &(mlx_data->t_south.image_data.size_line), &(mlx_data->t_south.image_data.endian));
+	mlx_data->t_west.image_data.data = mlx_get_data_addr(mlx_data->img_ptr, &(mlx_data->t_west.image_data.bits_per_pixel), &(mlx_data->t_west.image_data.size_line), &(mlx_data->t_west.image_data.endian));
+	mlx_data->t_east.image_data.data = mlx_get_data_addr(mlx_data->img_ptr, &(mlx_data->t_east.image_data.bits_per_pixel), &(mlx_data->t_east.image_data.size_line), &(mlx_data->t_east.image_data.endian));
+	mlx_data->t_sprite.image_data.data = mlx_get_data_addr(mlx_data->img_ptr, &(mlx_data->t_sprite.image_data.bits_per_pixel), &(mlx_data->t_sprite.image_data.size_line), &(mlx_data->t_sprite.image_data.endian));
+	return (1);
+}
+
 int ft_display_texture_top(t_mlx_data mlx_data)
 {
-	int north_height;
-	int north_width;
-	int south_height;
-	int south_width;
-	int west_height;
-	int west_width;
-	int east_height;
-	int east_width;
-	int sprite_height;
-	int sprite_width;
-
-	void *north_image_ptr;
-	void *south_image_ptr;
-	void *west_image_ptr;
-	void *east_image_ptr;
-	void *sprite_image_ptr;
-	if (!(north_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->north, &north_width, &north_height)))
-		return (-1);
-	if (!(south_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->south, &south_width, &south_height)))
-		return (-1);
-	if (!(west_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->west, &west_width, &west_height)))
-		return (-1);
-	if (!(east_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->east, &east_width, &east_height)))
-		return (-1);
-	if (!(sprite_image_ptr = mlx_xpm_file_to_image(mlx_data.mlx_ptr, mlx_data.desc->sprite, &sprite_width, &sprite_height)))
-		return (-1);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, north_image_ptr, 0, mlx_data.desc->y - 64);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, south_image_ptr, north_width, mlx_data.desc->y - 64);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, west_image_ptr, north_width + south_width, mlx_data.desc->y - 64);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, east_image_ptr, north_width + south_width + west_width, mlx_data.desc->y - 64);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, sprite_image_ptr, north_width + south_width + west_width + east_width, mlx_data.desc->y - 64);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.t_north.img_ptr, 0, mlx_data.desc->y - 64);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.t_south.img_ptr, mlx_data.t_north.width, mlx_data.desc->y - 64);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.t_west.img_ptr, mlx_data.t_north.width + mlx_data.t_south.width, mlx_data.desc->y - 64);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.t_east.img_ptr, mlx_data.t_north.width + mlx_data.t_south.width + mlx_data.t_west.width, mlx_data.desc->y - 64);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.t_sprite.img_ptr, mlx_data.t_north.width + mlx_data.t_south.width + mlx_data.t_west.width + mlx_data.t_east.width, mlx_data.desc->y - 64);
 	return (1);
 }
 
@@ -272,13 +263,13 @@ int ft_display_map(t_desc *desc, t_mlx_data mlx_data)
 	//camera
 	color = YELLOW;
 	ft_get_color_tab(YELLOW, color_tab);
-	x = desc->play_pos.x * draw_size_fixed+ 10 * desc->dir_pos.x - draw_size_fixed/4;
+	x = desc->play_pos.x * draw_size_fixed + 10/2 * desc->dir_pos.x - draw_size_fixed/4;
 	m = 0;
 	printf("->%d, \n", draw_size_fixed);
 	while (x + m < x + draw_size_fixed / 2)
 	{
 		l = 0;
-		y = desc->play_pos.y * draw_size_fixed + 10 * desc->dir_pos.y - draw_size_fixed/4;
+		y = desc->play_pos.y * draw_size_fixed + 10/2 * desc->dir_pos.y - draw_size_fixed/4;
 		while (y + l < y + draw_size_fixed / 2)
 		{
 			// if ((m == l) || (draw_size_fixed - m == l))
@@ -338,8 +329,6 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			step_y = 1;
 			sidedist_y = (map_y + 1.0 - pos_y) * deltadist_y;
 		}
-		// if (x < mlx_data.desc->x/2)
-			// printf("sidedist_x =  %f sidedist_y = %f \n", sidedist_x, sidedist_y);
 		while (hit == 0)
 		{		
 			if (sidedist_x < sidedist_y)
@@ -403,21 +392,6 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			ft_put_pixel_to_image(mlx_data, x, draw_start + j, color_tab);
 			j++;
 		}
-		// while (j + i < draw_end)
-		// {
-		// 	ft_put_pixel_to_image(mlx_data, x, j, color_tab);
-		// 	i++;
-		// }
-		// while (j + i < mlx_data.desc->y)
-		// {
-		// 	ft_put_pixel_to_image(mlx_data, x, j + i, mlx_data.desc->ceiling_tab);
-		// 	i++;
-		// }
-		// while (j < draw_end)
-		// {
-		// 	ft_put_pixel_to_image(mlx_data, x, j, color_tab);
-		// 	j++;
-		// }
 		x++;
 	}
 }
@@ -566,7 +540,6 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 	}
 	// printf("x = %f, int x = %d, y = %f, int y = %d|%c|\n", mlx_data->desc->play_pos.x, (int)(mlx_data->desc->play_pos.x), mlx_data->desc->play_pos.y, (int)(mlx_data->desc->play_pos.y), mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y)][(int)(mlx_data->desc->play_pos.x)]);
 	// printf("dir x = %f, int plane x = %f, dir y = %f, int plane y = %f\n", mlx_data->desc->dir_pos.x, mlx_data->desc->dir_pos.plane_x, mlx_data->desc->dir_pos.y, mlx_data->desc->dir_pos.plane_y);
-
 	printf("key pressed = %d\n", key);
 	return (0);
 }
@@ -587,10 +560,10 @@ int		main(int argc, char **argv)
 		write(1, "error\n", 6);
 		return (-1);
 	}
-	// mlx_key_hook(mlx_data.win_ptr, ft_key_pressed, &mlx_data);
 	ft_print_desc(&desc);
 	mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
 	mlx_data.main_image.data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.main_image.bits_per_pixel, &mlx_data.main_image.size_line, &mlx_data.main_image.endian);
+	ft_init_texture(&mlx_data);
 	ft_draw_walls(mlx_data);
 	if ((ft_display_map(&desc, mlx_data)) == -1)
 		return (-1);
@@ -598,7 +571,7 @@ int		main(int argc, char **argv)
 	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
 	if ((ft_display_texture_top(mlx_data)) == -1)
 	{
-		write(1, "probleme with texture\n", 22);
+		write(1, "problem with texture\n", 21);
 		ft_exit_hook(&mlx_data);
 		return (-1);
 	}

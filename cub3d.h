@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/16 15:44:39 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/16 17:28:24 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,9 +67,9 @@ typedef struct	s_image_datas
 
 typedef struct	s_texture_datas
 {
-	char *path;
+	void *img_ptr;
 	int height;
-	int weight;
+	int width;
 	t_image_datas image_data;
 }				t_texture_datas;
 
