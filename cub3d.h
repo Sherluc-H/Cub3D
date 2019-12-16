@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/14 18:11:02 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/16 15:44:39 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 # define GREEN 65280
 # define BLACK 0
 # define WHITE 16777215
+# define YELLOW 16776960
 # define KEY_A 0
 # define KEY_Q 12
 # define KEY_D 2
@@ -47,6 +48,7 @@ typedef struct	s_dir_pos
 	double y;
 	double plane_x;
 	double plane_y;
+	// int		angle;
 }				t_dir_pos;
 
 typedef struct	s_player_pos
@@ -55,19 +57,21 @@ typedef struct	s_player_pos
 	double y;
 }				t_player_pos;
 
-typedef struct	s_image_data
+typedef struct	s_image_datas
 {
 	char *data;
 	int bits_per_pixel;
 	int size_line;
 	int endian;
-}				t_image_data;
+}				t_image_datas;
 
-typedef struct	s_texture_data
+typedef struct	s_texture_datas
 {
 	char *path;
-	t_image_data image_data;
-}				t_texture_data;
+	int height;
+	int weight;
+	t_image_datas image_data;
+}				t_texture_datas;
 
 typedef struct	s_desc
 {
@@ -97,10 +101,16 @@ typedef struct	s_mlx_data
 	void *mlx_ptr;
 	void *win_ptr;
 	void *img_ptr;
-	char *data;
-	int bits_per_pixel;
-	int size_line;
-	int endian;
+	t_texture_datas t_north;
+	t_texture_datas t_south;
+	t_texture_datas t_west;
+	t_texture_datas t_east;
+	t_texture_datas t_sprite;
+	// char *data;
+	t_image_datas main_image;
+	// int bits_per_pixel;
+	// int size_line;
+	// int endian;
 	t_desc *desc;
 }				t_mlx_data;
 
