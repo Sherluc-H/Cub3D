@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/16 18:01:00 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/17 15:42:09 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ int ft_display_map(t_desc *desc, t_mlx_data mlx_data)
 	}
 	//player
 	l = 0;
-	ft_get_color_tab(BLACK, color_tab);
+	ft_get_color_tab(RED, color_tab);
 	y = draw_size_fixed * desc->play_pos.y;
 	x = draw_size_fixed * desc->play_pos.x;
 	ft_put_pixel_to_image(mlx_data, x, y, color_tab);
@@ -261,8 +261,47 @@ int ft_display_map(t_desc *desc, t_mlx_data mlx_data)
 	ft_put_pixel_to_image(mlx_data, x + 1, y, color_tab);
 	ft_put_pixel_to_image(mlx_data, x - 1, y, color_tab);
 	//camera
-	color = YELLOW;
-	ft_get_color_tab(YELLOW, color_tab);
+	// double x1, y1;
+	// double x2, y2;
+	// double dx, dy;
+	// double a;
+	// double b;
+	// double c;
+
+	// b = 0;
+	// a = 0.;
+	// x1 = desc->play_pos.x * draw_size_fixed;
+	// y1 = desc->play_pos.y * draw_size_fixed;
+	// x2 = x1 + desc->dir_pos.x * draw_size_fixed;
+	// y2 = y1 + desc->dir_pos.y * draw_size_fixed;
+	// if ( x1 != x2 )
+	// {
+	// 	dx = fabs(x2 - x1);
+	// 	dy = fabs(y2 - y1);
+	// 	printf("%f, %f    !\n", dx, dy);
+	// 	a = dy / dx;
+		color = YELLOW;
+		ft_get_color_tab(YELLOW, color_tab);
+	// 			printf("x1 = %f, y1 = %f", x1, y1);
+
+	// 		printf("x2 = %f, y2 = %f\n", x2, y2);
+	// 	printf("%f\n", a);
+	// 	while (b < 11)
+	// 	{
+	// 		// c = a*x1+y1;
+	// 		// printf("%f, %f, %f, %f\n", a, x1, y1, c);
+	// 		// printf("->>>x1 = %f, y1 = %f\n", x1, y1);
+	// 		// ft_put_pixel_to_image(mlx_data, x1, c, color_tab);
+	// 		// x1+= 0.1;
+	// 		// b++;
+	// 		c = a*(b*10)+y1;
+	// 		printf("%f, %f, %f, %f\n", a, x1, y1, c);
+	// 		printf("->>>x1 = %f, y1 = %f\n", x1, y1);
+	// 		ft_put_pixel_to_image(mlx_data, x1+(b*10), c, color_tab);
+	// 		x1+= 0.1;
+	// 		b += 0.1;
+	// 	}
+	// }
 	x = desc->play_pos.x * draw_size_fixed + 10/2 * desc->dir_pos.x - draw_size_fixed/4;
 	m = 0;
 	printf("->%d, \n", draw_size_fixed);
@@ -275,7 +314,7 @@ int ft_display_map(t_desc *desc, t_mlx_data mlx_data)
 			// if ((m == l) || (draw_size_fixed - m == l))
 				ft_put_pixel_to_image(mlx_data, x + m, y + l, color_tab);
 			l++;
-		}		
+		}
 		m++;
 	}
 	return (1);
@@ -309,6 +348,10 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		int step_y;
 		int hit = 0;
 		int side;
+		int side_left = 0;
+		int side_right = 0;
+		int top = 1;
+		int left = 1;
 		if (raydir_x < 0)
 		{
 			step_x = -1;
@@ -329,6 +372,14 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			step_y = 1;
 			sidedist_y = (map_y + 1.0 - pos_y) * deltadist_y;
 		}
+		if (raydir_y > 0)
+		{
+			top = -1;
+		}
+		if (raydir_x > 0)
+		{
+			left = -1;
+		}
 		while (hit == 0)
 		{		
 			if (sidedist_x < sidedist_y)
@@ -346,15 +397,18 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			if (mlx_data.desc->scene[map_y][map_x] > '0')
 				hit = 1;
 		}
+
 		if (side == 0)
 			perpwalldist = (map_y - pos_y + (1 - step_y) / 2) / (double)raydir_y;
 		else
 			perpwalldist = (map_x - pos_x + (1 - step_x) / 2) / (double)raydir_x;
 		int line_height;
-		if (floor(perpwalldist) != 0)
+		// if (floor(perpwalldist) != 0)
+		if (fabs(perpwalldist) > 0.00001)
 			line_height = (int)(mlx_data.desc->y / perpwalldist);
 		else
-			line_height = (int)(mlx_data.desc->y / ceil(perpwalldist));
+			line_height = (int)(mlx_data.desc->y / 1);
+		// printf("%d, %f \n", line_height, perpwalldist);
 		int draw_start = -line_height / 2 + mlx_data.desc->y/2;
 		if(draw_start < 0)
 			draw_start = 0;
@@ -362,18 +416,34 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		if (draw_end >= mlx_data.desc->y)
 			draw_end = mlx_data.desc->y - 1;
 		int color = 0;
-		if (mlx_data.desc->scene[map_y][map_x] == '1')
+		if (mlx_data.desc->scene[map_y][map_x] == '1' && left == 1 && side)//left-EAST
+		{
+			color = DARK_YELLOW;
+
+		}
+		else if (mlx_data.desc->scene[map_y][map_x] == '1' && left == -1 && side)//right-WEST
+		{
+			color = DARK_GREEN;
+
+		}
+		else if (mlx_data.desc->scene[map_y][map_x] == '1' && top == 1 && !side)//top-NORTH
+		{
 			color = RED;
+
+		}
+		else if (mlx_data.desc->scene[map_y][map_x] == '1' && top == -1 && !side)//bottom-SOUTH
+		{
+			color = BLACK;
+		}
 		else if (mlx_data.desc->scene[map_y][map_x] == '2')
+		{
 			color = GREEN;
+		}
 		else
 			color = WHITE;
-		if (side == 1)
-			color = color / 2;
 		ft_get_color_tab(color, color_tab);
 		j = 0;
 		i = 0;
-		// if (x < mlx_data.desc->x/2)
 			// printf("start:%d, end%d\n ", draw_start, draw_end);
 		while (j < draw_start)
 		{
@@ -438,7 +508,7 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		ft_display_texture_top(*mlx_data);
 	}
 	else if (key == KEY_W || key == KEY_Z)//move up
-	{
+	{//need improvement right box for example
 		if (fabs(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST) - (int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST))) < 0.000001)
 		{
 			if (mlx_data->desc->scene[(int)mlx_data->desc->play_pos.y][(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST) - 1)] == '0')
@@ -449,9 +519,9 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		else
 		{
 			if (mlx_data->desc->scene[(int)mlx_data->desc->play_pos.y][(int)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST))] == '0')
-				mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * MOVE_DIST;
+				mlx_data->desc->play_pos.x = mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST);
 			if (mlx_data->desc->scene[(int)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * (MOVE_DIST))][(int)(mlx_data->desc->play_pos.x)] == '0')
-				mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * MOVE_DIST;
+				mlx_data->desc->play_pos.y = mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * (MOVE_DIST);
 		}
 		ft_draw_walls(*mlx_data);
 		if ((ft_display_map(mlx_data->desc, *mlx_data)) == -1)

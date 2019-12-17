@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/16 17:28:24 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/17 11:50:14 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,11 @@
 # define RED 16711680
 # define BLUE 255
 # define GREEN 65280
+# define DARK_GREEN 3970620
 # define BLACK 0
 # define WHITE 16777215
 # define YELLOW 16776960
+# define DARK_YELLOW 9868860
 # define KEY_A 0
 # define KEY_Q 12
 # define KEY_D 2
