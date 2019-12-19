@@ -6,7 +6,7 @@
 #    By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/30 14:38:10 by lhuang            #+#    #+#              #
-#    Updated: 2019/12/17 10:16:48 by lhuang           ###   ########.fr        #
+#    Updated: 2019/12/19 16:17:55 by lhuang           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,7 +14,7 @@ CC= gcc
 RM= rm -f
 FLAGS= -L /usr/local/lib -lmlx -framework OpenGL -framework AppKit -Wall -Werror -Wextra
 NAME= Cub3D
-SRCS= cub3d.c ft_is.c ft_utils.c ft_check_args.c ft_get_description_utils.c ft_get_description.c
+SRCS= cub3d.c ft_is.c ft_utils.c ft_check_args.c ft_get_description_utils.c ft_get_description.c ft_get_textures.c ft_draw_utils.c ft_draw.c ft_handle_keys.c
 OBJS= $(SRCS:.c=.o)
 HEADER= cub3d.h
 

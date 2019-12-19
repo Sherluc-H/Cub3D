@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/17 11:50:14 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/19 16:19:44 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@
 # ifndef BUFFER_SIZE
 #  define BUFFER_SIZE 100
 # endif
+
+# define ROTATION_ANGLE 10
+# define MOVE_DIST 0.06
 
 # define RED 16711680
 # define BLUE 255
@@ -59,20 +62,23 @@ typedef struct	s_player_pos
 	double y;
 }				t_player_pos;
 
-typedef struct	s_image_datas
-{
-	char *data;
-	int bits_per_pixel;
-	int size_line;
-	int endian;
-}				t_image_datas;
+// typedef struct	s_image_datas
+// {
+// 	char *data;
+// 	int bpp;
+// 	int size_line;
+// 	int endian;
+// }				t_image_datas;
 
 typedef struct	s_texture_datas
 {
 	void *img_ptr;
 	int height;
 	int width;
-	t_image_datas image_data;
+	char *data;
+	int bpp;
+	int size_line;
+	int endian;
 }				t_texture_datas;
 
 typedef struct	s_desc
@@ -108,11 +114,11 @@ typedef struct	s_mlx_data
 	t_texture_datas t_west;
 	t_texture_datas t_east;
 	t_texture_datas t_sprite;
-	// char *data;
-	t_image_datas main_image;
-	// int bits_per_pixel;
-	// int size_line;
-	// int endian;
+	char *main_img_data;
+	// t_image_datas main_image;
+	int main_img_bpp;
+	int main_img_size_line;
+	int main_img_endian;
 	t_desc *desc;
 }				t_mlx_data;
 
@@ -153,5 +159,23 @@ int		ft_get_identifier(char *str, int *i, t_desc *desc);
 //ft_get_description.c
 int		ft_check_file_content(char *str, t_desc *desc);
 
+//ft_get_textures.c
+int 	ft_init_texture(t_mlx_data *mlx_data);
+int 	ft_display_texture_top(t_mlx_data mlx_data);
+
+//ft_draw_utils.c
+void 	ft_get_color_tab(int color, int color_tab[3]);
+void	ft_put_pixel_to_image(t_mlx_data mlx_data, int x, int y, int color_tab[3]);
+
+//ft_draw.c
+int		ft_draw_map(t_desc *desc, t_mlx_data mlx_data);
+void	ft_draw_walls(t_mlx_data mlx_data);
+
+//ft_handle_keys.c
+int		ft_key_pressed(int key, t_mlx_data *mlx_data);
+
+//ft_cub3d.c
+void	ft_freer(t_desc *desc);
+int ft_exit_hook(t_mlx_data *mlx_data);
 
 #endif
