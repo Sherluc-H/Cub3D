@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/19 16:19:44 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/20 20:10:11 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,12 @@
 # define KEY_RIGHT 124
 # define KEY_ESC 53
 # define KEY_SPACE 49
+
+typedef struct	s_remain
+{
+	char *str;
+	int size;
+}				t_remain;
 
 typedef struct	s_dir_pos
 {
@@ -131,6 +137,10 @@ typedef enum	e_path
 	SPRITE
 }				t_path;
 
+//ft_get_next_line.c
+int ft_get_next_line(int fd, char **line);
+
+
 //ft_is.c
 int		ft_is_space(char c);
 int		ft_is_number(char c);
@@ -141,7 +151,7 @@ int		ft_is_player_start(char c);
 //ft_utils.c
 int		ft_strlen(char *str);
 int		ft_strcmp(char *str1, char *str2);
-char	*ft_strjoin(char *str1, char *str2, int rd);
+char	*ft_strjoin(char *str1, char *str2);
 int		ft_atoi_simple(char *str);
 
 //ft_check_args.c

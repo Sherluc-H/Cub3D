@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/19 16:19:45 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/20 20:03:05 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,31 +114,32 @@ int		main(int argc, char **argv)
 	ft_init_desc(&desc);
 	if (!ft_check_args(argc, argv, &desc))
 		return (0);
-	ft_print_desc(&desc);
-	ft_print_map(&desc);
-	mlx_data.desc = &desc;
-	if (!(mlx_data.mlx_ptr = mlx_init()) || !(mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")))
-	{
-		write(1, "error\n", 6);
-		return (-1);
-	}
-	ft_print_desc(&desc);
-	mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
-	mlx_data.main_img_data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.main_img_bpp, &mlx_data.main_img_size_line, &mlx_data.main_img_endian);
-	ft_init_texture(&mlx_data);
-	ft_draw_walls(mlx_data);
-	if ((ft_draw_map(&desc, mlx_data)) == -1)
-		return (-1);
-	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
-	if ((ft_display_texture_top(mlx_data)) == -1)
-	{
-		write(1, "problem with texture\n", 21);
-		ft_exit_hook(&mlx_data);
-		return (-1);
-	}
-	mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
-	mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);//bouton X pour quitter
-	mlx_loop(mlx_data.mlx_ptr);
+	system("leaks Cub3D");
+	// ft_print_desc(&desc);
+	// ft_print_map(&desc);
+	// mlx_data.desc = &desc;
+	// if (!(mlx_data.mlx_ptr = mlx_init()) || !(mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")))
+	// {
+	// 	write(1, "error\n", 6);
+	// 	return (-1);
+	// }
+	// ft_print_desc(&desc);
+	// mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
+	// mlx_data.main_img_data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.main_img_bpp, &mlx_data.main_img_size_line, &mlx_data.main_img_endian);
+	// ft_init_texture(&mlx_data);
+	// ft_draw_walls(mlx_data);
+	// if ((ft_draw_map(&desc, mlx_data)) == -1)
+	// 	return (-1);
+	// mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
+	// mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
+	// if ((ft_display_texture_top(mlx_data)) == -1)
+	// {
+	// 	write(1, "problem with texture\n", 21);
+	// 	ft_exit_hook(&mlx_data);
+	// 	return (-1);
+	// }
+	// mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
+	// mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);//bouton X pour quitter
+	// mlx_loop(mlx_data.mlx_ptr);
 	return (1);
 }

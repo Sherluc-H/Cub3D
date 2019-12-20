@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 16:35:03 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/01 18:08:17 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/20 19:19:41 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,30 +38,32 @@ int		ft_strcmp(char *str1, char *str2)
 	return (1);
 }
 
-char	*ft_strjoin(char *str1, char *str2, int rd)
+char	*ft_strjoin(char *str1, char *str2)
 {
 	int		i;
 	int		j;
 	int		str1_size;
+	int		str2_size;
 	char	*str;
 
 	i = 0;
 	j = 0;
 	str1_size = ft_strlen(str1);
-	str = malloc(sizeof(char) * (str1_size + rd + 1));
+	str2_size = ft_strlen(str2);
+	str = malloc(sizeof(char) * (str1_size + str2_size + 1));
 	while (i < str1_size)
 	{
 		str[i] = str1[i];
 		i++;
 	}
-	while (j < rd)
+	while (j < str2_size)
 	{
 		str[i + j] = str2[j];
 		j++;
 	}
 	str[i + j] = '\0';
 	free(str1);
-	// free(str2);
+	free(str2);
 	return (str);
 }
 

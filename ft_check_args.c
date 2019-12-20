@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:48:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/07 10:54:16 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/20 20:19:06 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,23 +43,35 @@ int		ft_check_description(char *filename, t_desc *desc)
 	int		fd;
 	int		rd;
 	char	*b;
-	char	*str1;
+	// char	*str1;
+	char *line;
+	int res;
 
 	if (!(ft_check_file_extension(filename, ".cub")))
 		return (0);
 	rd = 0;
 	if((fd = open(filename, O_RDONLY)) == -1)
 		return (0);
-	str1 = malloc(sizeof(char) * 1);
-	str1[0] = '\0';
-	b = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	while ((rd = read(fd, b, BUFFER_SIZE)) > 0)
+	// str1 = malloc(sizeof(char) * 1);
+	// str1[0] = '\0';
+	// b = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	while ((res = ft_get_next_line(fd, &line)))
 	{
-		str1 = ft_strjoin(str1, b, rd);
+
+		printf("->%d, %s\n", res, line);
+		free(line);
+		line = NULL;
 	}
-	free(b);
-	if ((!ft_check_file_content(str1, desc)))
-		return (0);
+	printf("->%d, %s\n", res, line);
+	free(line);
+	line = NULL;
+	// while ((rd = read(fd, b, BUFFER_SIZE)) > 0)
+	// {
+	// 	str1 = ft_strjoin(str1, b, rd);
+	// }
+	// free(b);
+	// if ((!ft_check_file_content(str1, desc)))
+	// 	return (0);
 	// printf("|%s|\n", str1);
 	return (1);
 }
