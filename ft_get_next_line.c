@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/20 18:54:27 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/20 20:14:42 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 11:54:49 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,7 @@ int ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 
 	i = 0;
 	buf[*rd] = '\0';
+	// printf("|||%s|||\n", buf);
 	if (!(str2 = malloc(sizeof(char) * (*rd + 1))))
 		return(-1);
 	while (i < *rd)
@@ -138,6 +139,7 @@ int ft_get_next_line(int fd, char **line)
 	while (!end_line && (rd = read(fd, buf, BUFFER_SIZE)))
 		end_line = ft_cut_line(buf, &remain, &rd, line);
 	free(buf);
+	// printf("->|||%s|||\n", *line);
 	buf = NULL;
 	if (!end_line && rd == 0)
 	{

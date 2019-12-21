@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 16:16:26 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/19 16:18:25 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 20:42:48 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,6 @@
 
 int ft_key_pressed(int key, t_mlx_data *mlx_data)
 {
-	double x;
-	double y;
-	double play_x;
-	double play_y;
-	double decalage_x;
-	double decalage_y;
 	double camera_rot_angle;
 	if (key == KEY_ESC)
 		ft_exit_hook(mlx_data);

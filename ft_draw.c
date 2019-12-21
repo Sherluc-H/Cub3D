@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 15:30:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/19 15:58:55 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 20:54:54 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ int ft_draw_map(t_desc *desc, t_mlx_data mlx_data)
 	int draw_size;
 	int color_tab[3];
 	int color;
-	double angle_degre = 0.66;
 
 	x = 0;
 	y = 0;
@@ -191,10 +190,9 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		int step_y;
 		int hit = 0;
 		int side;
-		int side_left = 0;
-		int side_right = 0;
 		int top = 1;
 		int left = 1;
+
 		if (raydir_x < 0)
 		{
 			step_x = -1;
@@ -215,6 +213,7 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			step_y = 1;
 			sidedist_y = (map_y + 1.0 - pos_y) * deltadist_y;
 		}
+
 		if (raydir_y > 0)
 		{
 			top = -1;
@@ -240,7 +239,6 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			if (mlx_data.desc->scene[map_y][map_x] > '0')
 				hit = 1;
 		}
-
 		if (side == 0)
 			perpwalldist = (map_y - pos_y + (1 - step_y) / 2) / (double)raydir_y;
 		else
@@ -259,7 +257,6 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		if (draw_end >= mlx_data.desc->y)
 			draw_end = mlx_data.desc->y - 1;
 		int color = 0;
-
 		//texture
 		double wall_x;
 
@@ -277,7 +274,6 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			texture_x = 64 - texture_x - 1;
 		if (side == 1 && raydir_x < 0)
 			texture_x = 64 - texture_x - 1;
-
 		t_texture_datas texture;
 		texture = mlx_data.t_north;
 
@@ -314,6 +310,9 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			color = WHITE;
 		ft_get_color_tab(color, color_tab);
 		j = 0;
+		// printf("draw_start = %d, draw_end = %d\n", draw_start, draw_end);
+		// 		printf("x = %d, j = %d\n", x, j);
+
 		while (j < draw_start)
 		{
 			ft_put_pixel_to_image(mlx_data, x, j, mlx_data.desc->ceiling_tab);
@@ -330,10 +329,13 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		{
 			int d = (j+draw_start) * 256 - mlx_data.desc->y * 128 + line_height * 128;
 			int texture_y = ((d*64) / line_height) / 256;
-			color_tab[0] = texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 2];//same for each normalement
-			color_tab[1] = texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 1];
-			color_tab[2] = texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 0];
-			ft_put_pixel_to_image(mlx_data, x, draw_start + j, color_tab);
+			// if (texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 3] != -1)
+			// {
+				color_tab[0] = texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 2];//same for each normalement
+				color_tab[1] = texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 1];
+				color_tab[2] = texture.data[texture_y * texture.size_line + texture_x * texture.bpp / 8 + 0];
+				ft_put_pixel_to_image(mlx_data, x, draw_start + j, color_tab);
+			// }
 			j++;
 		}
 		x++;

@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:48:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/20 20:19:06 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 20:56:33 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,41 +38,238 @@ int		ft_check_file_extension(char *filename, char *extension)
 	return (0);
 }
 
+char	*ft_strjoin_with_sep(char *str1, char *str2, char sep)
+{
+	int		i;
+	int		j;
+	int		str1_size;
+	int		str2_size;
+	char	*str;
+
+	i = 0;
+	j = 0;
+	if (str1 == NULL)
+		str1_size = 0;
+	else
+		str1_size = ft_strlen(str1);
+	str2_size = ft_strlen(str2);
+	if (!(str = malloc(sizeof(char) * (str1_size + str2_size + 2))))
+		return (NULL);
+	while (i < str1_size)
+	{
+		str[i] = str1[i];
+		i++;
+	}
+	if (str1_size > 0)
+	{
+		str[i] = sep;
+		i++;
+	}
+	while (j < str2_size)
+	{
+		str[i + j] = str2[j];
+		j++;
+	}
+	str[i + j] = '\0';
+	free(str1);
+	// free(str2);//ne pas free la line car elle sera free par le ft_get_next_line
+	return (str);
+}
+
+void	ft_add_player(t_desc *desc, char player_char, int j, int l)
+{
+	desc->player_found = 1;
+	if (player_char == 'N')
+	{
+		desc->dir_pos.x = 0;
+		desc->dir_pos.y = -1;
+		desc->dir_pos.plane_x = 0.66;
+		desc->dir_pos.plane_y = 0;
+	}
+	else if (player_char == 'S')
+	{
+		desc->dir_pos.x = 0;
+		desc->dir_pos.y = 1;
+		desc->dir_pos.plane_x = -0.66;
+		desc->dir_pos.plane_y = 0;
+	}
+	else if (player_char == 'W')
+	{
+		desc->dir_pos.x = -1;
+		desc->dir_pos.y = 0;
+		desc->dir_pos.plane_x = 0;
+		desc->dir_pos.plane_y = -0.66;
+	}
+	else if (player_char == 'E')
+	{
+		desc->dir_pos.x = 1;
+		desc->dir_pos.y = 0;
+		desc->dir_pos.plane_x = 0;
+		desc->dir_pos.plane_y = 0.66;
+	}
+	desc->play_pos.x = j + 0.5;
+	desc->play_pos.y = l + 0.5;
+}
+
+char	*ft_clean_scene_line(t_desc *desc, char *line, int *i, int l)
+{
+	int		j;
+	int		k;
+	char	*new_line;
+
+	j = 0;
+	k = 0;
+	new_line = NULL;
+	while (line[*i + k] != '\0' && line[*i + k] != '\n')
+	{
+		if (!(ft_is_scene_element(line[*i + k]) || ft_is_player_start(line[*i + k]) || line[*i + k] == ' '))
+			return (NULL);
+		if (ft_is_scene_element(line[*i + k]))
+			j++;
+		else if (ft_is_player_start(line[*i + k]))
+		{
+			if (desc->player_found == 1)
+				return (NULL);
+			ft_add_player(desc, line[*i + k], j, l);
+			line[*i + k] = '0';
+			j++;
+		}
+		k++;
+	}
+	//check size of each line
+	if (desc->nb_l == 0)
+		desc->nb_col = j;
+	else
+	{
+		if (desc->nb_col != j)
+		{
+			// printf("col = %d\n", desc->nb_col);
+			// printf("j = %d\n", j);
+			return (NULL);
+		}
+	}
+	new_line = malloc(sizeof(char) * (j+1));
+	j = 0;
+	while (line[*i] != '\0' && line[*i] != '\n')
+	{
+		if (ft_is_scene_element(line[*i]) || ft_is_player_start(line[*i]))
+		{
+			new_line[j] = line[*i];
+			j++;
+		}
+		*i = *i + 1;
+	}
+	new_line[j] = '\0';
+	// printf("#%s\n", new_line);
+	return (new_line);
+}
+
+int		ft_create_scene(t_desc *desc, char *scene_str)
+{
+	char	*clean_line;
+	int		count;
+	int		i;
+	int		j;
+	
+	i = 0;
+	count = 0;
+	while (scene_str[i])
+	{
+		if (scene_str[i] == '\n')
+			count++;
+		i++;
+	}
+	i = 0;
+	// printf("count %d\n", count);
+	if(!(desc->scene = malloc(sizeof(char *) * (count + 2))))
+		return (-1);
+	// printf("count = %d\n", count);
+	while (desc->nb_l < count + 1)
+	{
+		if(!(clean_line = ft_clean_scene_line(desc, scene_str, &i, desc->nb_l)))
+			return (-1);
+		j = 0;
+		if (clean_line[desc->nb_col - 1] != '1')
+			return (-1);
+		if (desc->nb_l == 0 || desc->nb_l == count)//checkfirst and last line
+		{
+			while (clean_line[j])
+			{
+				if (clean_line[j] != '1')
+					return (-1);
+				j++;
+			}
+		}
+		i++;
+		// printf("@%d -> %s\n", desc->nb_l, clean_line);
+		desc->scene[desc->nb_l] = clean_line;
+		desc->nb_l = desc->nb_l + 1;
+	}
+	desc->scene[desc->nb_l] = NULL;
+	// printf("nb = %d\n", desc->nb_l);
+	// printf("nb = %d\n", desc->nb_col);
+	return (0);
+}
+
+int		ft_check_line(t_desc *desc, char *line, char first_char)
+{
+	int i;
+
+	i = 0;
+	if (first_char == 'R' && desc->resolution_ok == 0)
+		return (ft_parse_resolution(line, desc, &i));
+	else if (ft_is_path_identifier(line, i))
+		return (ft_parse_path(line, desc, &i));
+	else if (first_char == 'F' && desc->floor_ok == 0)
+	{
+		if (!(ft_parse_color(line, desc->floor_tab, &(desc->floor_ok), &(desc->floor_color))))
+			return (-1);
+		return (1);
+	}
+	else if (first_char == 'C' && desc->ceiling_ok == 0)
+	{
+		if (!(ft_parse_color(line, desc->ceiling_tab, &(desc->ceiling_ok), &(desc->ceiling_color))))
+			return (-1);
+		return (1);
+	}
+	else if (first_char == '1' && ft_is_description_ready_scene(desc))
+	{
+		desc->start_parse_scene = 1;
+		desc->scene_str = ft_strjoin_with_sep(desc->scene_str, line, '\n');
+		return (1);
+	}
+	else if ((first_char == '\n' || first_char == '\0') && !desc->start_parse_scene)
+		return (1);
+	return (-1);
+}
+
 int		ft_check_description(char *filename, t_desc *desc)
 {
 	int		fd;
 	int		rd;
-	char	*b;
-	// char	*str1;
-	char *line;
-	int res;
+	char	*line;
+	int		res;
 
 	if (!(ft_check_file_extension(filename, ".cub")))
 		return (0);
 	rd = 0;
 	if((fd = open(filename, O_RDONLY)) == -1)
 		return (0);
-	// str1 = malloc(sizeof(char) * 1);
-	// str1[0] = '\0';
-	// b = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	while ((res = ft_get_next_line(fd, &line)))
 	{
-
-		printf("->%d, %s\n", res, line);
+		// printf("->%d, %s|\n", res, line);
+		if ((ft_check_line(desc, line, line[0])) == -1)
+			return (0);
 		free(line);
 		line = NULL;
 	}
-	printf("->%d, %s\n", res, line);
+	// printf("->%d, %s\n", res, line);
+	if ((ft_check_line(desc, line, line[0])) == -1)
+		return (0);
 	free(line);
 	line = NULL;
-	// while ((rd = read(fd, b, BUFFER_SIZE)) > 0)
-	// {
-	// 	str1 = ft_strjoin(str1, b, rd);
-	// }
-	// free(b);
-	// if ((!ft_check_file_content(str1, desc)))
-	// 	return (0);
-	// printf("|%s|\n", str1);
+	if ((ft_create_scene(desc, desc->scene_str)) == -1)
+		return (0);
 	return (1);
 }
 

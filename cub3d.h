@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/20 20:10:11 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 18:52:16 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,15 +92,18 @@ typedef struct	s_desc
 	int		resolution_ok;
 	int		x;
 	int		y;
-	char	*north;
-	char	*south;
-	char	*west;
-	char	*east;
-	char	*sprite;
+	char	*north_path;
+	char	*south_path;
+	char	*west_path;
+	char	*east_path;
+	char	*sprite_path;
 	int		floor_ok;
 	int		ceiling_ok;
 	int		floor_tab[3];
 	int		ceiling_tab[3];
+	int		player_found;
+	int		start_parse_scene;
+	char	*scene_str;
 	char	**scene;
 	int		nb_col;
 	int		nb_l;
@@ -167,7 +170,11 @@ int		ft_get_path(char *str, int *i, t_desc *desc, int path_id);
 int		ft_get_identifier(char *str, int *i, t_desc *desc);
 
 //ft_get_description.c
-int		ft_check_file_content(char *str, t_desc *desc);
+int		ft_parse_resolution(char *str, t_desc *desc, int *i);
+int		ft_parse_path(char *str, t_desc *desc, int *i);
+int		ft_parse_color(char *str, int tab[3], int *color_ok, int *desc_color);
+int		ft_is_path_identifier(char *str, int i);
+int		ft_is_description_ready_scene(t_desc *desc);
 
 //ft_get_textures.c
 int 	ft_init_texture(t_mlx_data *mlx_data);

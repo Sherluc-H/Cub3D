@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 16:35:03 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/20 19:19:41 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 12:39:12 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,8 @@ char	*ft_strjoin(char *str1, char *str2)
 	j = 0;
 	str1_size = ft_strlen(str1);
 	str2_size = ft_strlen(str2);
-	str = malloc(sizeof(char) * (str1_size + str2_size + 1));
+	if (!(str = malloc(sizeof(char) * (str1_size + str2_size + 1))))
+		return (NULL);
 	while (i < str1_size)
 	{
 		str[i] = str1[i];
@@ -80,7 +81,6 @@ int		ft_atoi_simple(char *str)
 		nb = nb + str[i] - 48;
 		i++;
 	}
-	// printf("nb = %d\n", nb);
 	free(str);
 	return (nb);
 }

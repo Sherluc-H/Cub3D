@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/20 20:03:05 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 19:10:49 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,13 +17,16 @@ void	ft_init_desc(t_desc *desc)
 	desc->resolution_ok = 0;
 	desc->x = 0;
 	desc->y = 0;
-	desc->north = NULL;
-	desc->south = NULL;
-	desc->west = NULL;
-	desc->east = NULL;
-	desc->sprite = NULL;
+	desc->north_path = NULL;
+	desc->south_path = NULL;
+	desc->west_path = NULL;
+	desc->east_path = NULL;
+	desc->sprite_path = NULL;
 	desc->floor_ok = 0;
 	desc->ceiling_ok = 0;
+	desc->player_found = 0;
+	desc->start_parse_scene = 0;
+	desc->scene_str = NULL;
 	desc->scene = NULL;
 	desc->nb_col = 0;
 	desc->nb_l = 0;
@@ -33,17 +36,17 @@ void	ft_init_desc(t_desc *desc)
 	desc->play_pos.y = 0.;
 	desc->dir_pos.x = 0.;
 	desc->dir_pos.y = 0.;
-	// desc->dir_pos.angle = 0;
 }
 void	ft_freer(t_desc *desc)
 {
 	int j;
 
 	j = 0;
-	free(desc->north);
-	free(desc->south);
-	free(desc->west);
-	free(desc->east);
+	free(desc->north_path);
+	free(desc->south_path);
+	free(desc->west_path);
+	free(desc->east_path);
+	free(desc->sprite_path);
 	while (desc->scene[j])
 	{
 		free(desc->scene[j]);
@@ -65,11 +68,11 @@ void ft_print_desc(t_desc *desc)
 {
 	printf("x = %d\n", desc->x);
 	printf("y = %d\n", desc->y);
-	printf("north = %s\n", desc->north);
-	printf("south = %s\n", desc->south);
-	printf("west = %s\n", desc->west);
-	printf("east = %s\n", desc->east);
-	printf("sprite = %s\n", desc->sprite);
+	printf("north = %s\n", desc->north_path);
+	printf("south = %s\n", desc->south_path);
+	printf("west = %s\n", desc->west_path);
+	printf("east = %s\n", desc->east_path);
+	printf("sprite = %s\n", desc->sprite_path);
 	printf("resolution_ok = %d\n", desc->resolution_ok);
 	printf("floor_ok = %d\n", desc->floor_ok);
 	printf("ceiling_ok = %d\n", desc->ceiling_ok);
@@ -115,31 +118,32 @@ int		main(int argc, char **argv)
 	if (!ft_check_args(argc, argv, &desc))
 		return (0);
 	system("leaks Cub3D");
-	// ft_print_desc(&desc);
-	// ft_print_map(&desc);
-	// mlx_data.desc = &desc;
-	// if (!(mlx_data.mlx_ptr = mlx_init()) || !(mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")))
-	// {
-	// 	write(1, "error\n", 6);
-	// 	return (-1);
-	// }
-	// ft_print_desc(&desc);
-	// mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
-	// mlx_data.main_img_data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.main_img_bpp, &mlx_data.main_img_size_line, &mlx_data.main_img_endian);
-	// ft_init_texture(&mlx_data);
-	// ft_draw_walls(mlx_data);
-	// if ((ft_draw_map(&desc, mlx_data)) == -1)
-	// 	return (-1);
-	// mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
-	// mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
-	// if ((ft_display_texture_top(mlx_data)) == -1)
-	// {
-	// 	write(1, "problem with texture\n", 21);
-	// 	ft_exit_hook(&mlx_data);
-	// 	return (-1);
-	// }
-	// mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
-	// mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);//bouton X pour quitter
-	// mlx_loop(mlx_data.mlx_ptr);
+	ft_print_desc(&desc);
+	ft_print_map(&desc);
+	mlx_data.desc = &desc;
+	if (!(mlx_data.mlx_ptr = mlx_init()) || !(mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")))
+	{
+		write(1, "error\n", 6);
+		return (-1);
+	}
+	ft_print_desc(&desc);
+	mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
+	mlx_data.main_img_data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.main_img_bpp, &mlx_data.main_img_size_line, &mlx_data.main_img_endian);
+	if ((ft_init_texture(&mlx_data)) == -1)
+		return (-1);
+	ft_draw_walls(mlx_data);
+	if ((ft_draw_map(&desc, mlx_data)) == -1)
+		return (-1);
+	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
+	if ((ft_display_texture_top(mlx_data)) == -1)
+	{
+		write(1, "problem with texture\n", 21);
+		ft_exit_hook(&mlx_data);
+		return (-1);
+	}
+	mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
+	mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);
+	mlx_loop(mlx_data.mlx_ptr);
 	return (1);
 }

@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 15:27:23 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/19 16:35:26 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/21 19:23:42 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 int	ft_init_texture(t_mlx_data *mlx_data)
 {
-	if (!(mlx_data->t_north.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->north, &(mlx_data->t_north.width), &(mlx_data->t_north.height))) ||
-	!(mlx_data->t_south.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->south, &(mlx_data->t_south.width), &(mlx_data->t_south.height))) ||
-	!(mlx_data->t_west.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->west, &(mlx_data->t_west.width), &(mlx_data->t_west.height))) ||
-	!(mlx_data->t_east.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->east, &(mlx_data->t_east.width), &(mlx_data->t_east.height))) ||
-	!(mlx_data->t_sprite.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->sprite, &(mlx_data->t_sprite.width), &(mlx_data->t_sprite.height))))
+	if (!(mlx_data->t_north.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->north_path, &(mlx_data->t_north.width), &(mlx_data->t_north.height))) ||
+	!(mlx_data->t_south.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->south_path, &(mlx_data->t_south.width), &(mlx_data->t_south.height))) ||
+	!(mlx_data->t_west.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->west_path, &(mlx_data->t_west.width), &(mlx_data->t_west.height))) ||
+	!(mlx_data->t_east.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->east_path, &(mlx_data->t_east.width), &(mlx_data->t_east.height))) ||
+	!(mlx_data->t_sprite.img_ptr = mlx_xpm_file_to_image(mlx_data->mlx_ptr, mlx_data->desc->sprite_path, &(mlx_data->t_sprite.width), &(mlx_data->t_sprite.height))))
 		return (-1);
 	mlx_data->t_north.data = mlx_get_data_addr(mlx_data->t_north.img_ptr, &(mlx_data->t_north.bpp), &(mlx_data->t_north.size_line), &(mlx_data->t_north.endian));
 	mlx_data->t_south.data = mlx_get_data_addr(mlx_data->t_south.img_ptr, &(mlx_data->t_south.bpp), &(mlx_data->t_south.size_line), &(mlx_data->t_south.endian));
