@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/21 19:10:49 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/25 15:53:25 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ void	ft_init_desc(t_desc *desc)
 	desc->play_pos.y = 0.;
 	desc->dir_pos.x = 0.;
 	desc->dir_pos.y = 0.;
+	desc->sprite_tab = NULL;
+	desc->nb_sprite = 0;
 }
 void	ft_freer(t_desc *desc)
 {
@@ -132,6 +134,21 @@ int		main(int argc, char **argv)
 	if ((ft_init_texture(&mlx_data)) == -1)
 		return (-1);
 	ft_draw_walls(mlx_data);
+	printf("%d\n", mlx_data.main_img_bpp);
+		printf("%d\n", mlx_data.main_img_size_line);
+
+	printf("%d\n", mlx_data.main_img_endian);
+
+	// int i;
+	// i = 0;
+	// while(i < 800 * 500 * 4)
+	// {
+	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i]);//b
+	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i + 1]);//g
+	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i + 2]);//r
+	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i + 3]);
+	// 	i += 4;
+	// }
 	if ((ft_draw_map(&desc, mlx_data)) == -1)
 		return (-1);
 	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);

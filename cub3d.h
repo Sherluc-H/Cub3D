@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/21 18:52:16 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/25 11:52:22 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@
 # endif
 
 # define ROTATION_ANGLE 10
-# define MOVE_DIST 0.06
+# define MOVE_DIST 0.05
 
 # define RED 16711680
 # define BLUE 255
@@ -67,6 +67,12 @@ typedef struct	s_player_pos
 	double x;
 	double y;
 }				t_player_pos;
+
+typedef struct	s_sprite
+{
+	double x;
+	double y;
+}				t_sprite;
 
 // typedef struct	s_image_datas
 // {
@@ -111,6 +117,8 @@ typedef struct	s_desc
 	int		ceiling_color;
 	t_player_pos play_pos;
 	t_dir_pos dir_pos;
+	t_sprite *sprite_tab;
+	int		nb_sprite;
 }				t_desc;
 
 typedef struct	s_mlx_data

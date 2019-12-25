@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:48:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/21 20:56:33 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/24 17:36:40 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,17 @@ void	ft_add_player(t_desc *desc, char player_char, int j, int l)
 	desc->play_pos.y = l + 0.5;
 }
 
+// int		ft_add_sprite(t_desc *desc, int j, int l)
+// {
+// 	(void)j;
+// 	(void)l;
+// 	if (!desc->sprite_list)
+// 	{
+// 		printf("ok");
+// 	}
+// 	return (1);
+// }
+
 char	*ft_clean_scene_line(t_desc *desc, char *line, int *i, int l)
 {
 	int		j;
@@ -125,7 +136,14 @@ char	*ft_clean_scene_line(t_desc *desc, char *line, int *i, int l)
 		if (!(ft_is_scene_element(line[*i + k]) || ft_is_player_start(line[*i + k]) || line[*i + k] == ' '))
 			return (NULL);
 		if (ft_is_scene_element(line[*i + k]))
+		{
+			if (line[*i + k] == '2')
+			{
+				desc->nb_sprite = desc->nb_sprite + 1;
+				// ft_add_sprite(desc, j ,l);
+			}
 			j++;
+		}
 		else if (ft_is_player_start(line[*i + k]))
 		{
 			if (desc->player_found == 1)
@@ -170,6 +188,7 @@ int		ft_create_scene(t_desc *desc, char *scene_str)
 	int		count;
 	int		i;
 	int		j;
+	int		k;
 	
 	i = 0;
 	count = 0;
@@ -206,6 +225,27 @@ int		ft_create_scene(t_desc *desc, char *scene_str)
 		desc->nb_l = desc->nb_l + 1;
 	}
 	desc->scene[desc->nb_l] = NULL;
+	desc->sprite_tab = malloc(sizeof(*(desc->sprite_tab)) * desc->nb_sprite);
+	i = 0;
+	j = 0;
+	k = 0;
+	while (desc->scene[i])
+	{
+		j = 0;
+		while (desc->scene[i][j])
+		{
+			if (desc->scene[i][j] == '2')
+			{
+				(desc->sprite_tab)[k].x = j + 0.5;
+				(desc->sprite_tab)[k].y = i + 0.5;
+				// desc->scene[i][j] = '0';
+				// printf("!!k = %d, x = %f, y = %f \n", k, (desc->sprite_tab)[k].x, (desc->sprite_tab)[k].y);
+				k++;
+			}
+			j++;
+		}
+		i++;
+	}
 	// printf("nb = %d\n", desc->nb_l);
 	// printf("nb = %d\n", desc->nb_col);
 	return (0);

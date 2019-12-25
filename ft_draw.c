@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 15:30:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/21 20:54:54 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/25 10:56:17 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,60 @@ int ft_draw_map(t_desc *desc, t_mlx_data mlx_data)
 	return (1);
 }
 
+void ft_sort_sprite_tab(t_sprite *sprite_tab, double *sprite_dist_tab, int nb_sprite)
+{
+	int i;
+	int j;
+	t_sprite sprite_tmp;
+	double dist_tmp;
+
+	i = 0;
+	j = 0;
+	while (i < nb_sprite)
+	{
+		j = 0;
+		while (j < nb_sprite - 1)
+		{
+			if (sprite_dist_tab[j] < sprite_dist_tab[j+1])
+			{
+				sprite_tmp = sprite_tab[j];
+				sprite_tab[j] = sprite_tab[j+1];
+				sprite_tab[j + 1] = sprite_tmp;
+				dist_tmp = sprite_dist_tab[j];
+				sprite_dist_tab[j] = sprite_dist_tab[j+1];
+				sprite_dist_tab[j + 1] = dist_tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
+void ft_sort(int *tab, int nb)
+{
+	int i;
+	int j;
+	int tmp;
+
+	i = 0;
+	j = 0;
+	while (i < nb)
+	{
+		j = 0;
+		while (j < nb - 1)
+		{
+			if (tab[j] < tab[j + 1])
+			{
+				tmp = tab[j];
+				tab[j] = tab[j+1];
+				tab[j+1] = tmp;
+			}
+			j++;
+		}
+		i++;
+	}
+}
+
 void ft_draw_walls(t_mlx_data mlx_data)
 {
 	int j;
@@ -170,10 +224,12 @@ void ft_draw_walls(t_mlx_data mlx_data)
 	double pos_y = mlx_data.desc->play_pos.y;
 	double pos_x = mlx_data.desc->play_pos.x;
 	int color_tab[3];
+	t_texture_datas texture;
 	
 	j = 0;
 	x = 0;
 	i = 0;
+	double perp_dist_buffer[mlx_data.desc->x];
 	while (x < mlx_data.desc->x)
 	{
 		double camera_x = 2 * x / (double)mlx_data.desc->x - 1.;
@@ -236,7 +292,7 @@ void ft_draw_walls(t_mlx_data mlx_data)
 				map_y += step_y;
 				side = 0;
 			}
-			if (mlx_data.desc->scene[map_y][map_x] > '0')
+			if (mlx_data.desc->scene[map_y][map_x] == '1')
 				hit = 1;
 		}
 		if (side == 0)
@@ -245,6 +301,7 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			perpwalldist = (map_x - pos_x + (1 - step_x) / 2) / (double)raydir_x;
 		int line_height;
 		// if (floor(perpwalldist) != 0)
+		perp_dist_buffer[x] = perpwalldist;
 		if (fabs(perpwalldist) > 0.00001)
 			line_height = (int)(mlx_data.desc->y / perpwalldist);
 		else
@@ -254,8 +311,8 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		if(draw_start < 0)
 			draw_start = 0;
 		int draw_end = line_height / 2 + mlx_data.desc->y /2;
-		if (draw_end >= mlx_data.desc->y)
-			draw_end = mlx_data.desc->y - 1;
+		if (draw_end > mlx_data.desc->y)
+			draw_end = mlx_data.desc->y;
 		int color = 0;
 		//texture
 		double wall_x;
@@ -274,7 +331,6 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			texture_x = 64 - texture_x - 1;
 		if (side == 1 && raydir_x < 0)
 			texture_x = 64 - texture_x - 1;
-		t_texture_datas texture;
 		texture = mlx_data.t_north;
 
 		if (mlx_data.desc->scene[map_y][map_x] == '1' && left == 1 && side)//left-EAST
@@ -340,4 +396,71 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		}
 		x++;
 	}
+	// i = 0;
+	// double *sprite_dist = malloc (sizeof(double) * mlx_data.desc->nb_sprite);
+	// while (i < mlx_data.desc->nb_sprite)
+	// {
+	// 	sprite_dist[i] = ((mlx_data.desc->play_pos.x - mlx_data.desc->sprite_tab[i].x) * (mlx_data.desc->play_pos.x - mlx_data.desc->sprite_tab[i].x) + (mlx_data.desc->play_pos.y - mlx_data.desc->sprite_tab[i].y) * (mlx_data.desc->play_pos.y - mlx_data.desc->sprite_tab[i].y));
+	// 	// printf("i = %d\n", i);	
+	// 	i++;
+	// }
+	// i = 0;
+	// while (i < mlx_data.desc->nb_sprite)
+	// {
+	// 	printf("%f, %f, %f\n", sprite_dist[i], mlx_data.desc->sprite_tab[i].x, mlx_data.desc->sprite_tab[i].y);
+	// 	i++;
+	// }
+	// ft_sort_sprite_tab(mlx_data.desc->sprite_tab, sprite_dist, mlx_data.desc->nb_sprite);//plus loin au plus pres
+	// i = 0;
+	// while (i < mlx_data.desc->nb_sprite)
+	// {
+	// 	printf("%f, %f, %f\n", sprite_dist[i], mlx_data.desc->sprite_tab[i].x, mlx_data.desc->sprite_tab[i].y);
+	// 	i++;
+	// }
+	// int tab[10] = {0,5,8,6,4,2,36,65,6,66};
+	// ft_sort(tab, 10);
+	// i = 0;
+	// while (i < 10)
+	// {
+	// 	printf("%d, \n", tab[i]);
+	// 	i++;
+	// }
+	// i = 0;
+	// texture = mlx_data.t_sprite;
+
+
+
+	// while (i < mlx_data.desc->nb_sprite)
+	// {
+	// 	double sprite_x = mlx_data.desc->sprite_tab[i].x - mlx_data.desc->play_pos.x;
+	// 	double sprite_y = mlx_data.desc->sprite_tab[i].y - mlx_data.desc->play_pos.y;
+
+	// 	int stripe = draw_sprite_start_x;
+	// 	while (stripe < draw_sprite_end_x)
+	// 	{
+	// 		int texture_x = (int)(256 * (stripe - (-sprite_width / 2 + sprite_screen)) * 64 / sprite_width) / 256;
+	// 		if (transform_y > 0 && stripe > 0 && stripe < mlx_data.desc->x && transform_y < perp_dist_buffer[stripe])
+	// 		{
+	// 			int y = draw_sprite_start_y;
+	// 			while (y < draw_sprite_end_y)
+	// 			{
+	// 				int d = (y) * 256 - mlx_data.desc->y * 128 + sprite_height * 128;
+	// 				int texture_y = ((d * 64) / sprite_height) / 256;
+	// 				color_tab[0] = texture.data[texture_y * texture.size_line+ texture_x * texture.bpp/8 + 2];
+	// 				color_tab[1] = texture.data[texture_y * texture.size_line+ texture_x * texture.bpp/8 + 1];
+	// 				color_tab[2] = texture.data[texture_y * texture.size_line+ texture_x * texture.bpp/8 + 0];
+	// 				// printf("a");
+	// 				if (texture.data[texture_y * texture.size_line+ texture_x * texture.bpp/8 + 3] != -1)
+	// 					ft_put_pixel_to_image(mlx_data, stripe, y, color_tab);
+	// 				y++;
+	// 			}
+	// 		}
+	// 		stripe++;
+	// 	}
+	// 	i++;
+	// }
+
+
+
+	// free(sprite_dist);
 }
