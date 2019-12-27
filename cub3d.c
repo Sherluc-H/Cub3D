@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/25 15:53:25 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/27 17:08:51 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ void	ft_init_desc(t_desc *desc)
 	desc->resolution_ok = 0;
 	desc->x = 0;
 	desc->y = 0;
+	desc->to_save = 0;
 	desc->north_path = NULL;
 	desc->south_path = NULL;
 	desc->west_path = NULL;
@@ -111,6 +112,67 @@ void ft_print_map(t_desc *desc)
 	printf("---END---\n");
 }
 
+// int ft_dec_to_hex(char c)
+// {
+// 	unsigned char uc;
+
+// 	uc = (unsigned char)c;
+// 	if (uc / 16 < 16)
+// 	{
+// 		return (nb);
+// 	}
+// }
+
+void ft_screen_bmp(t_mlx_data mlx_data)
+{
+	int i;
+	int l;
+	unsigned char tab[mlx_data.desc->x * 4];
+	unsigned char h_tab[54];
+	int fd;
+	int *int_p;
+
+	fd = open("cub3d.bmp", O_CREAT | O_WRONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+	i = 0;
+	while (i < 54)
+	{
+		h_tab[i] = 0;
+		i++;
+	}
+	h_tab[0] = 0x42;
+	h_tab[1] = 0x4d;
+	int_p = (int *)(&h_tab[2]);
+	*int_p = (54 + mlx_data.desc->x * mlx_data.desc->y * 4);
+	h_tab[10] = 0x36;
+	h_tab[14] = 0x28;
+	int_p = (int *)(&h_tab[18]);
+	*int_p = mlx_data.desc->x;
+	int_p = (int *)(&h_tab[22]);
+	*int_p = mlx_data.desc->y;
+	h_tab[26] = 0x01;
+	h_tab[28] = mlx_data.main_img_bpp;
+	int_p = (int *)(&h_tab[34]);
+	*int_p = mlx_data.desc->x * mlx_data.desc->y * 4;
+	int_p = (int *)(&h_tab[38]);
+	*int_p = mlx_data.desc->x;
+	int_p = (int *)(&h_tab[42]);
+	*int_p = mlx_data.desc->y;
+	write(fd, h_tab, 54);
+	i = 0;
+	l = 0;
+	while (l < mlx_data.desc->y)
+	{
+		if (i == mlx_data.desc->x * 4)
+		{
+			write(fd, tab, mlx_data.desc->x * 4);
+			i = 0;
+			l++;
+		}
+		tab[i] = mlx_data.main_img_data[mlx_data.main_img_size_line * (mlx_data.desc->y - 1) - (mlx_data.main_img_size_line * l) + i];
+		i++;
+	}
+}
+
 int		main(int argc, char **argv)
 {
 	t_desc desc;
@@ -135,20 +197,13 @@ int		main(int argc, char **argv)
 		return (-1);
 	ft_draw_walls(mlx_data);
 	printf("%d\n", mlx_data.main_img_bpp);
-		printf("%d\n", mlx_data.main_img_size_line);
-
+	printf("%d\n", mlx_data.main_img_size_line);
 	printf("%d\n", mlx_data.main_img_endian);
-
-	// int i;
-	// i = 0;
-	// while(i < 800 * 500 * 4)
-	// {
-	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i]);//b
-	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i + 1]);//g
-	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i + 2]);//r
-	// 	printf("->%d\n", (unsigned char)mlx_data.main_img_data[i + 3]);
-	// 	i += 4;
-	// }
+	if (desc.to_save)
+	{
+		ft_screen_bmp(mlx_data);
+		return (0);
+	}
 	if ((ft_draw_map(&desc, mlx_data)) == -1)
 		return (-1);
 	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);

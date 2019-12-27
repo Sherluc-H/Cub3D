@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/25 11:52:22 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/27 17:05:00 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,6 +98,7 @@ typedef struct	s_desc
 	int		resolution_ok;
 	int		x;
 	int		y;
+	int		to_save;
 	char	*north_path;
 	char	*south_path;
 	char	*west_path;

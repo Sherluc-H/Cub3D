@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 16:16:26 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/25 15:18:37 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/26 14:43:59 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,22 +84,34 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		if (new_play_y < mlx_data->desc->play_pos.y)//monte
 		{
 			if (mlx_data->desc->scene[(int)(float)(new_play_y) - 1][(int)(float)(new_play_x) - 1] != '0')
+			{
+				printf("up\n");
 				return (0);
+			}
 		}
 		else if (new_play_y > mlx_data->desc->play_pos.y)//descend
 		{
 			if (mlx_data->desc->scene[(int)(float)(new_play_y)][(int)(float)(new_play_x) - 1] != '0')
+			{
+				printf("down\n");
 				return (0);
+			}
 		}
 		else if (new_play_x > mlx_data->desc->play_pos.x)//droite
 		{
 			if (mlx_data->desc->scene[(int)(float)(new_play_y) - 1][(int)(float)(new_play_x)] != '0')
+			{
+				printf("right\n");
 				return (0);
+			}
 		}
 		else if (new_play_x < mlx_data->desc->play_pos.x)//gauche
 		{
 			if (mlx_data->desc->scene[(int)(float)(new_play_y) - 1][(int)(float)(new_play_x) - 1] != '0')
+			{
+				printf("left\n");
 				return (0);
+			}
 		}
 	}
 	if (mlx_data->desc->scene[(int)(float)(new_play_y)][(int)(float)(new_play_x)] == '0')

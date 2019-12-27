@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:48:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/24 17:36:40 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/27 17:05:22 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -332,6 +332,7 @@ int		ft_check_args(int argc, char **argv, t_desc *desc)
 			write(2, "Second argument is wrong\n", 25);
 			return (0);
 		}
+		desc->to_save = 1;
 	}
 	desc_file = argc == 3 ? argv[2] : argv[1];
 	if (!(ft_check_description(desc_file, desc)))
