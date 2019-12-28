@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/27 17:08:51 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/28 20:37:10 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 void	ft_init_desc(t_desc *desc)
 {
+	desc->error = 0;
 	desc->resolution_ok = 0;
 	desc->x = 0;
 	desc->y = 0;
@@ -40,34 +41,47 @@ void	ft_init_desc(t_desc *desc)
 	desc->sprite_tab = NULL;
 	desc->nb_sprite = 0;
 }
+
 void	ft_freer(t_desc *desc)
 {
 	int j;
 
 	j = 0;
-	free(desc->north_path);
-	free(desc->south_path);
-	free(desc->west_path);
-	free(desc->east_path);
-	free(desc->sprite_path);
-	while (desc->scene[j])
+	if (desc->north_path)
+		free(desc->north_path);
+	if (desc->south_path)
+		free(desc->south_path);
+	if (desc->west_path)
+		free(desc->west_path);
+	if (desc->east_path)
+		free(desc->east_path);
+	if (desc->sprite_path)
+		free(desc->sprite_path);
+	if (desc->scene_str)
+		free(desc->scene_str);
+	if (desc->sprite_tab)
+		free(desc->sprite_tab);
+	if (desc->scene)
 	{
-		free(desc->scene[j]);
-		j++;
+		while (desc->scene[j])
+		{
+			free(desc->scene[j]);
+			j++;
+		}
+		free(desc->scene);
 	}
-	free(desc->scene);
 }
 
-int ft_exit_hook(t_mlx_data *mlx_data)
+int		ft_exit_hook(t_mlx_data *mlx_data)
 {
 	mlx_destroy_window(mlx_data->mlx_ptr, mlx_data->win_ptr);
 	ft_freer(mlx_data->desc);
 	system("leaks Cub3D");
 	exit(0);
-	return(0);
+	return (0);
 }
 
-void ft_print_desc(t_desc *desc)
+void	ft_print_desc(t_desc *desc)
 {
 	printf("x = %d\n", desc->x);
 	printf("y = %d\n", desc->y);
@@ -91,7 +105,7 @@ void ft_print_desc(t_desc *desc)
 	printf("dir y = %f\n", desc->dir_pos.y);
 }
 
-void ft_print_map(t_desc *desc)
+void	ft_print_map(t_desc *desc)
 {
 	int i;
 	int j;
@@ -112,108 +126,85 @@ void ft_print_map(t_desc *desc)
 	printf("---END---\n");
 }
 
-// int ft_dec_to_hex(char c)
-// {
-// 	unsigned char uc;
-
-// 	uc = (unsigned char)c;
-// 	if (uc / 16 < 16)
-// 	{
-// 		return (nb);
-// 	}
-// }
-
-void ft_screen_bmp(t_mlx_data mlx_data)
+int		ft_show_error(t_error error, t_mlx_data *mlx_data)
 {
-	int i;
-	int l;
-	unsigned char tab[mlx_data.desc->x * 4];
-	unsigned char h_tab[54];
-	int fd;
-	int *int_p;
-
-	fd = open("cub3d.bmp", O_CREAT | O_WRONLY, S_IRWXU | S_IRWXG | S_IRWXO);
-	i = 0;
-	while (i < 54)
+	printf("%d\n", error);
+	write(2, "Error\n", 6);
+	if (error == MALLOC)
 	{
-		h_tab[i] = 0;
-		i++;
+		write(2, "Problem during allocation\n", 26);
 	}
-	h_tab[0] = 0x42;
-	h_tab[1] = 0x4d;
-	int_p = (int *)(&h_tab[2]);
-	*int_p = (54 + mlx_data.desc->x * mlx_data.desc->y * 4);
-	h_tab[10] = 0x36;
-	h_tab[14] = 0x28;
-	int_p = (int *)(&h_tab[18]);
-	*int_p = mlx_data.desc->x;
-	int_p = (int *)(&h_tab[22]);
-	*int_p = mlx_data.desc->y;
-	h_tab[26] = 0x01;
-	h_tab[28] = mlx_data.main_img_bpp;
-	int_p = (int *)(&h_tab[34]);
-	*int_p = mlx_data.desc->x * mlx_data.desc->y * 4;
-	int_p = (int *)(&h_tab[38]);
-	*int_p = mlx_data.desc->x;
-	int_p = (int *)(&h_tab[42]);
-	*int_p = mlx_data.desc->y;
-	write(fd, h_tab, 54);
-	i = 0;
-	l = 0;
-	while (l < mlx_data.desc->y)
+	else if (error == MLX)
 	{
-		if (i == mlx_data.desc->x * 4)
-		{
-			write(fd, tab, mlx_data.desc->x * 4);
-			i = 0;
-			l++;
-		}
-		tab[i] = mlx_data.main_img_data[mlx_data.main_img_size_line * (mlx_data.desc->y - 1) - (mlx_data.main_img_size_line * l) + i];
-		i++;
+		write(2, "Problem during call of a mlx function\n", 39);
 	}
+	else if (error == ARG)
+	{
+		write(2, "Wrong arguments\n", 16);
+	}
+	else if (error == PARSE)
+	{
+		write(2, "Description file not acceptable\n", 33);
+	}
+	else if (error == OPEN)
+	{
+		write(2, "File cannot be found or opened\n", 31);
+	}
+	else
+		write(2, "Something went wrong\n", 21);
+	ft_freer(mlx_data->desc);
+	system("leaks Cub3D");
+	return (0);
 }
 
-int		main(int argc, char **argv)
+int		ft_set_error(t_desc *desc, t_error error)
 {
-	t_desc desc;
-	t_mlx_data mlx_data;
+	printf("%d\n", error);
+	desc->error = error;
+	return (0);
+}
 
-	ft_init_desc(&desc);
-	if (!ft_check_args(argc, argv, &desc))
-		return (0);
-	system("leaks Cub3D");
-	ft_print_desc(&desc);
-	ft_print_map(&desc);
-	mlx_data.desc = &desc;
-	if (!(mlx_data.mlx_ptr = mlx_init()) || !(mlx_data.win_ptr = mlx_new_window(mlx_data.mlx_ptr, desc.x, desc.y, "Cub3D")))
+int		ft_init_mlx(t_mlx_data *mlx_data, t_desc desc)
+{
+	if (!(mlx_data->mlx_ptr = mlx_init()))
 	{
 		write(1, "error\n", 6);
 		return (-1);
 	}
-	ft_print_desc(&desc);
-	mlx_data.img_ptr = mlx_new_image(mlx_data.mlx_ptr, desc.x, desc.y);
-	mlx_data.main_img_data = mlx_get_data_addr(mlx_data.img_ptr, &mlx_data.main_img_bpp, &mlx_data.main_img_size_line, &mlx_data.main_img_endian);
-	if ((ft_init_texture(&mlx_data)) == -1)
-		return (-1);
-	ft_draw_walls(mlx_data);
-	printf("%d\n", mlx_data.main_img_bpp);
-	printf("%d\n", mlx_data.main_img_size_line);
-	printf("%d\n", mlx_data.main_img_endian);
-	if (desc.to_save)
+	if (!(mlx_data->win_ptr = mlx_new_window(mlx_data->mlx_ptr, desc.x, desc.y, "Cub3D")))
 	{
-		ft_screen_bmp(mlx_data);
-		return (0);
+		write(1, "error\n", 6);
+		return (-1);
 	}
+	if ((mlx_data->img_ptr = mlx_new_image(mlx_data->mlx_ptr, desc.x, desc.y)) == NULL)
+		return (-1);
+	mlx_data->main_img_data = mlx_get_data_addr(mlx_data->img_ptr, &mlx_data->main_img_bpp, &mlx_data->main_img_size_line, &mlx_data->main_img_endian);
+	if ((ft_init_texture(mlx_data)) == -1)
+		return (-1);
+	return (1);
+}
+
+int		main(int argc, char **argv)
+{
+	t_desc		desc;
+	t_mlx_data	mlx_data;
+
+	ft_init_desc(&desc);
+	mlx_data.desc = &desc;
+	if (!ft_check_args(argc, argv, &desc))
+		return (ft_show_error(desc.error, &mlx_data));
+	//ft_print_desc(&desc);
+	//ft_print_map(&desc);
+	if ((ft_init_mlx(&mlx_data, desc)) == -1)
+		return (ft_show_error(MLX, &mlx_data));
+	ft_draw_walls(mlx_data);
+	if (desc.to_save)
+		return (ft_save(mlx_data));
 	if ((ft_draw_map(&desc, mlx_data)) == -1)
 		return (-1);
 	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
 	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
-	if ((ft_display_texture_top(mlx_data)) == -1)
-	{
-		write(1, "problem with texture\n", 21);
-		ft_exit_hook(&mlx_data);
-		return (-1);
-	}
+	ft_display_texture_top(mlx_data);
 	mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
 	mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);
 	mlx_loop(mlx_data.mlx_ptr);

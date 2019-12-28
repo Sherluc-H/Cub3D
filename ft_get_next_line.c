@@ -6,16 +6,16 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/20 18:54:27 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/21 11:54:49 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/28 12:58:37 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int ft_create_remain(t_remain **remain, int i, int end_line, char *buf)
+int	ft_create_remain(t_remain **remain, int i, int end_line, char *buf)
 {
-	int j;
-	char *new_remain;
+	int		j;
+	char	*new_remain;
 
 	j = 0;
 	new_remain = 0;
@@ -37,13 +37,13 @@ int ft_create_remain(t_remain **remain, int i, int end_line, char *buf)
 	free((*remain)->str);
 	(*remain)->str = NULL;
 	(*remain)->size = 0;
-	return(1);
+	return (1);
 }
 
-int ft_cut_remain(char *buf, t_remain **remain, int *end_line, char **line)
+int	ft_cut_remain(char *buf, t_remain **remain, int *end_line, char **line)
 {
-	int i;
-	char *str2;
+	int		i;
+	char	*str2;
 
 	i = 0;
 	if (!(str2 = malloc(sizeof(char) * ((*remain)->size + 1))))
@@ -64,16 +64,15 @@ int ft_cut_remain(char *buf, t_remain **remain, int *end_line, char **line)
 	return (1);
 }
 
-int ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
+int	ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 {
-	int i;
-	char *str2;
+	int		i;
+	char	*str2;
 
 	i = 0;
 	buf[*rd] = '\0';
-	// printf("|||%s|||\n", buf);
 	if (!(str2 = malloc(sizeof(char) * (*rd + 1))))
-		return(-1);
+		return (-1);
 	while (i < *rd)
 	{
 		str2[i] = buf[i];
@@ -95,7 +94,7 @@ int ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 	return (-1);
 }
 
-int ft_free_remain(t_remain **remain)
+int	ft_free_remain(t_remain **remain)
 {
 	if ((*remain))
 	{
@@ -107,19 +106,19 @@ int ft_free_remain(t_remain **remain)
 	return (0);
 }
 
-int ft_get_next_line(int fd, char **line)
+int	ft_get_next_line(int fd, char **line)
 {
-	static t_remain *remain = NULL;
-	int end_line;
-	int rd;
-	char *buf;
+	static t_remain	*remain = NULL;
+	int				end_line;
+	int				rd;
+	char			*buf;
 
 	end_line = 0;
 	*line = NULL;
 	if (!remain)
 	{
-		if(!(remain = malloc(sizeof(*remain))))
-			return(-1);
+		if (!(remain = malloc(sizeof(*remain))))
+			return (-1);
 		remain->str = NULL;
 		remain->size = 0;
 	}
@@ -129,17 +128,16 @@ int ft_get_next_line(int fd, char **line)
 			ft_cut_remain(remain->str, &remain, &end_line, line);
 		else
 		{
-			if(!(*line = malloc(sizeof(char) * 1)))
-				return(-1);
+			if (!(*line = malloc(sizeof(char) * 1)))
+				return (-1);
 			(*line)[0] = '\0';
 		}
 	}
-	if(!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
+	if (!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
 	while (!end_line && (rd = read(fd, buf, BUFFER_SIZE)))
 		end_line = ft_cut_line(buf, &remain, &rd, line);
 	free(buf);
-	// printf("->|||%s|||\n", *line);
 	buf = NULL;
 	if (!end_line && rd == 0)
 	{

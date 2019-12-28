@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/27 17:05:00 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/28 20:31:09 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 # include <mlx.h>
 # include <unistd.h>
 # include <stdlib.h>
+# include <errno.h>
 # include <fcntl.h>
 # include <stdio.h>
 # include <string.h>
@@ -26,7 +27,7 @@
 # endif
 
 # define ROTATION_ANGLE 10
-# define MOVE_DIST 0.05
+# define MOVE_DIST 0.0888
 
 # define RED 16711680
 # define BLUE 255
@@ -47,6 +48,24 @@
 # define KEY_ESC 53
 # define KEY_SPACE 49
 
+typedef enum	e_path
+{
+	NORTH = 1,
+	SOUTH,
+	WEST,
+	EAST,
+	SPRITE
+}				t_path;
+
+typedef enum	e_error
+{
+	MALLOC = 10,
+	MLX,
+	ARG,
+	PARSE,
+	OPEN
+}				t_error;
+
 typedef struct	s_remain
 {
 	char *str;
@@ -59,7 +78,6 @@ typedef struct	s_dir_pos
 	double y;
 	double plane_x;
 	double plane_y;
-	// int		angle;
 }				t_dir_pos;
 
 typedef struct	s_player_pos
@@ -74,14 +92,6 @@ typedef struct	s_sprite
 	double y;
 }				t_sprite;
 
-// typedef struct	s_image_datas
-// {
-// 	char *data;
-// 	int bpp;
-// 	int size_line;
-// 	int endian;
-// }				t_image_datas;
-
 typedef struct	s_texture_datas
 {
 	void *img_ptr;
@@ -95,6 +105,7 @@ typedef struct	s_texture_datas
 
 typedef struct	s_desc
 {
+	t_error	error;
 	int		resolution_ok;
 	int		x;
 	int		y;
@@ -133,21 +144,11 @@ typedef struct	s_mlx_data
 	t_texture_datas t_east;
 	t_texture_datas t_sprite;
 	char *main_img_data;
-	// t_image_datas main_image;
 	int main_img_bpp;
 	int main_img_size_line;
 	int main_img_endian;
 	t_desc *desc;
 }				t_mlx_data;
-
-typedef enum	e_path
-{
-	NORTH = 1,
-	SOUTH,
-	WEST,
-	EAST,
-	SPRITE
-}				t_path;
 
 //ft_get_next_line.c
 int ft_get_next_line(int fd, char **line);
@@ -200,8 +201,13 @@ void	ft_draw_walls(t_mlx_data mlx_data);
 //ft_handle_keys.c
 int		ft_key_pressed(int key, t_mlx_data *mlx_data);
 
+//ft_save_screen.c
+int		ft_save(t_mlx_data mlx_data);
+
 //ft_cub3d.c
 void	ft_freer(t_desc *desc);
-int ft_exit_hook(t_mlx_data *mlx_data);
+int 	ft_exit_hook(t_mlx_data *mlx_data);
+int 	ft_set_error(t_desc *desc, t_error error);
+int		ft_show_error(t_error error, t_mlx_data *mlx_data);
 
 #endif

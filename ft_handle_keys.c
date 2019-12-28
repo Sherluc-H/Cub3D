@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 16:16:26 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/26 14:43:59 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/28 18:04:03 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,44 +36,44 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 	}
 	else if (key == KEY_W || key == KEY_Z)//move up
 	{
-		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST / 10))] == '0')
+		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))] == '0')
 		{
 			new_play_x =  mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.x * (MOVE_DIST);
 		}
-		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST / 10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
+		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
 		{
 			new_play_y =  mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.y * (MOVE_DIST);
 		}
 	}
 	else if (key == KEY_S)//down
 	{
-		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST / 10))] == '0')
+		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))] == '0')
 		{
 			new_play_x =  mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.x * (MOVE_DIST);
 		}
-		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST / 10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
+		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
 		{
 			new_play_y =  mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.y * (MOVE_DIST);
 		}
 	}
 	else if (key == KEY_A || key == KEY_Q)//move left
 	{
-		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST / 10))] == '0')
+		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))] == '0')
 		{
 			new_play_x =  mlx_data->desc->play_pos.x + mlx_data->desc->dir_pos.y * (MOVE_DIST);
 		}
-		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST / 10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
+		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
 		{
 			new_play_y =  mlx_data->desc->play_pos.y - mlx_data->desc->dir_pos.x * (MOVE_DIST);
 		}
 	}
 	else if (key == KEY_D)//right
 	{
-		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST / 10))] == '0')
+		if (mlx_data->desc->scene[(int)(float)mlx_data->desc->play_pos.y][(int)(float)(mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * (MOVE_DIST + MOVE_DIST/10))] == '0')
 		{
 			new_play_x =  mlx_data->desc->play_pos.x - mlx_data->desc->dir_pos.y * (MOVE_DIST);
 		}
-		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST / 10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
+		if (mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * (MOVE_DIST + MOVE_DIST/10))][(int)(float)(mlx_data->desc->play_pos.x)] == '0')
 		{
 			new_play_y =  mlx_data->desc->play_pos.y + mlx_data->desc->dir_pos.x * (MOVE_DIST);
 		}
@@ -124,8 +124,8 @@ int ft_key_pressed(int key, t_mlx_data *mlx_data)
 		mlx_put_image_to_window(mlx_data->mlx_ptr, mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
 		ft_display_texture_top(*mlx_data);
 	}
-		// printf("!x = %f, int x = %d, y = %f, int y = %d|%c|\n", mlx_data->desc->play_pos.x, (int)(float)(mlx_data->desc->play_pos.x), mlx_data->desc->play_pos.y, (int)(float)(mlx_data->desc->play_pos.y), mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y)][(int)(float)(mlx_data->desc->play_pos.x)]);
+		 printf("!x = %f, int x = %d, y = %f, int y = %d|%c|\n", mlx_data->desc->play_pos.x, (int)(float)(mlx_data->desc->play_pos.x), mlx_data->desc->play_pos.y, (int)(float)(mlx_data->desc->play_pos.y), mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y)][(int)(float)(mlx_data->desc->play_pos.x)]);
 	// printf("dir x = %f, int plane x = %f, dir y = %f, int plane y = %f\n", mlx_data->desc->dir_pos.x, mlx_data->desc->dir_pos.plane_x, mlx_data->desc->dir_pos.y, mlx_data->desc->dir_pos.plane_y);
-	printf("key pressed = %d\n", key);
+	//printf("key pressed = %d\n", key);
 	return (0);
 }
