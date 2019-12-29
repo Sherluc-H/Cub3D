@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 12:09:08 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 17:44:36 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,18 +81,16 @@ int		ft_parse_color(char *str, int tab[3], int *color_ok, int *desc_color)
 	return (1);
 }
 
-int		ft_is_path_identifier(char *str, int i)
+void	ft_give_path(t_desc *desc, int path_id, char *new)
 {
-	return ((str[i] == 'N' && str[i + 1] == 'O') ||
-			(str[i] == 'S' && str[i + 1] == 'O') ||
-			(str[i] == 'W' && str[i + 1] == 'E') ||
-			(str[i] == 'E' && str[i + 1] == 'A') ||
-			(str[i] == 'S' && str[i + 1] == ' '));
-}
-
-int		ft_is_description_ready_scene(t_desc *desc)
-{
-	return (desc->resolution_ok && desc->north_path &&
-			desc->south_path && desc->west_path && desc->east_path &&
-			desc->sprite_path && desc->floor_ok && desc->ceiling_ok);
+	if (path_id == NORTH)
+		desc->north_path = new;
+	else if (path_id == SOUTH)
+		desc->south_path = new;
+	else if (path_id == WEST)
+		desc->west_path = new;
+	else if (path_id == EAST)
+		desc->east_path = new;
+	else if (path_id == SPRITE)
+		desc->sprite_path = new;
 }

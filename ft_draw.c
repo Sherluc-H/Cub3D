@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 15:30:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 20:22:20 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 21:44:14 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,47 +103,8 @@ int ft_draw_map(t_desc *desc, t_mlx_data mlx_data)
 	ft_put_pixel_to_image(mlx_data, x + 1, y, color_tab);
 	ft_put_pixel_to_image(mlx_data, x - 1, y, color_tab);
 	//camera
-	// double x1, y1;
-	// double x2, y2;
-	// double dx, dy;
-	// double a;
-	// double b;
-	// double c;
-
-	// b = 0;
-	// a = 0.;
-	// x1 = desc->play_pos.x * draw_size_fixed;
-	// y1 = desc->play_pos.y * draw_size_fixed;
-	// x2 = x1 + desc->dir_pos.x * draw_size_fixed;
-	// y2 = y1 + desc->dir_pos.y * draw_size_fixed;
-	// if ( x1 != x2 )
-	// {
-	// 	dx = fabs(x2 - x1);
-	// 	dy = fabs(y2 - y1);
-	// 	printf("%f, %f    !\n", dx, dy);
-	// 	a = dy / dx;
-		color = YELLOW;
-		ft_get_color_tab(YELLOW, color_tab);
-	// 			printf("x1 = %f, y1 = %f", x1, y1);
-
-	// 		printf("x2 = %f, y2 = %f\n", x2, y2);
-	// 	printf("%f\n", a);
-	// 	while (b < 11)
-	// 	{
-	// 		// c = a*x1+y1;
-	// 		// printf("%f, %f, %f, %f\n", a, x1, y1, c);
-	// 		// printf("->>>x1 = %f, y1 = %f\n", x1, y1);
-	// 		// ft_put_pixel_to_image(mlx_data, x1, c, color_tab);
-	// 		// x1+= 0.1;
-	// 		// b++;
-	// 		c = a*(b*10)+y1;
-	// 		printf("%f, %f, %f, %f\n", a, x1, y1, c);
-	// 		printf("->>>x1 = %f, y1 = %f\n", x1, y1);
-	// 		ft_put_pixel_to_image(mlx_data, x1+(b*10), c, color_tab);
-	// 		x1+= 0.1;
-	// 		b += 0.1;
-	// 	}
-	// }
+	color = YELLOW;
+	ft_get_color_tab(YELLOW, color_tab);
 	x = desc->play_pos.x * draw_size_fixed + 10/2 * desc->dir_pos.x - draw_size_fixed/4;
 	m = 0;
 	while (x + m < x + draw_size_fixed / 2)
@@ -297,8 +258,8 @@ void ft_draw_walls(t_mlx_data mlx_data)
 			perpwalldist = (map_y - pos_y + (1 - step_y) / 2) / (double)raydir_y;
 		else
 			perpwalldist = (map_x - pos_x + (1 - step_x) / 2) / (double)raydir_x;
-		if (perpwalldist < 0.0042)
-			perpwalldist = 0.0042;
+		if (perpwalldist < 0.0066)
+			perpwalldist = 0.0066;
 		int line_height;
 		// if (floor(perpwalldist) != 0)
 		perp_dist_buffer[x] = perpwalldist;
@@ -313,7 +274,7 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		int draw_end = line_height / 2 + mlx_data.desc->y /2;
 		if (draw_end > mlx_data.desc->y)
 			draw_end = mlx_data.desc->y;
-			// printf("%d, %d, %d, %.10f \n", line_height, draw_start, draw_end, perpwalldist);
+		// printf("%d, %d, %d, %.10f \n", line_height, draw_start, draw_end, perpwalldist);
 		int color = 0;
 		//texture
 		double wall_x;
@@ -325,7 +286,7 @@ void ft_draw_walls(t_mlx_data mlx_data)
 		{
 			wall_x = pos_y + perpwalldist * raydir_y;
 		}
-			// printf("%f\n", wall_x);
+		// printf("%f\n", wall_x);
 		wall_x -= floor(wall_x);
 		int texture_x = (int)(wall_x * (double)64);
 		if (side == 0 && raydir_y > 0)

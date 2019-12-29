@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 20:37:10 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 17:41:47 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,36 +40,6 @@ void	ft_init_desc(t_desc *desc)
 	desc->dir_pos.y = 0.;
 	desc->sprite_tab = NULL;
 	desc->nb_sprite = 0;
-}
-
-void	ft_freer(t_desc *desc)
-{
-	int j;
-
-	j = 0;
-	if (desc->north_path)
-		free(desc->north_path);
-	if (desc->south_path)
-		free(desc->south_path);
-	if (desc->west_path)
-		free(desc->west_path);
-	if (desc->east_path)
-		free(desc->east_path);
-	if (desc->sprite_path)
-		free(desc->sprite_path);
-	if (desc->scene_str)
-		free(desc->scene_str);
-	if (desc->sprite_tab)
-		free(desc->sprite_tab);
-	if (desc->scene)
-	{
-		while (desc->scene[j])
-		{
-			free(desc->scene[j]);
-			j++;
-		}
-		free(desc->scene);
-	}
 }
 
 int		ft_exit_hook(t_mlx_data *mlx_data)
@@ -124,44 +94,6 @@ void	ft_print_map(t_desc *desc)
 		j++;
 	}
 	printf("---END---\n");
-}
-
-int		ft_show_error(t_error error, t_mlx_data *mlx_data)
-{
-	printf("%d\n", error);
-	write(2, "Error\n", 6);
-	if (error == MALLOC)
-	{
-		write(2, "Problem during allocation\n", 26);
-	}
-	else if (error == MLX)
-	{
-		write(2, "Problem during call of a mlx function\n", 39);
-	}
-	else if (error == ARG)
-	{
-		write(2, "Wrong arguments\n", 16);
-	}
-	else if (error == PARSE)
-	{
-		write(2, "Description file not acceptable\n", 33);
-	}
-	else if (error == OPEN)
-	{
-		write(2, "File cannot be found or opened\n", 31);
-	}
-	else
-		write(2, "Something went wrong\n", 21);
-	ft_freer(mlx_data->desc);
-	system("leaks Cub3D");
-	return (0);
-}
-
-int		ft_set_error(t_desc *desc, t_error error)
-{
-	printf("%d\n", error);
-	desc->error = error;
-	return (0);
 }
 
 int		ft_init_mlx(t_mlx_data *mlx_data, t_desc desc)

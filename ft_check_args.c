@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:48:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 17:23:28 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 21:02:26 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,43 +36,6 @@ int		ft_check_file_extension(char *filename, char *extension)
 			return (1);
 	}
 	return (0);
-}
-
-char	*ft_strjoin_with_sep(char *str1, char *str2, char sep)
-{
-	int		i;
-	int		j;
-	int		str1_size;
-	int		str2_size;
-	char	*str;
-
-	i = 0;
-	j = 0;
-	if (str1 == NULL)
-		str1_size = 0;
-	else
-		str1_size = ft_strlen(str1);
-	str2_size = ft_strlen(str2);
-	if (!(str = malloc(sizeof(char) * (str1_size + str2_size + 2))))
-		return (NULL);
-	while (i < str1_size)
-	{
-		str[i] = str1[i];
-		i++;
-	}
-	if (str1_size > 0)
-	{
-		str[i] = sep;
-		i++;
-	}
-	while (j < str2_size)
-	{
-		str[i + j] = str2[j];
-		j++;
-	}
-	str[i + j] = '\0';
-	free(str1);
-	return (str);
 }
 
 void	ft_add_player(t_desc *desc, char player_char, int j, int l)
@@ -108,122 +71,6 @@ void	ft_add_player(t_desc *desc, char player_char, int j, int l)
 	}
 	desc->play_pos.x = j + 0.5;
 	desc->play_pos.y = l + 0.5;
-}
-
-char	*ft_clean_scene_line(t_desc *desc, char *line, int *i, int l)
-{
-	int		j;
-	int		k;
-	char	*new_line;
-
-	j = 0;
-	k = 0;
-	new_line = NULL;
-	while (line[*i + k] != '\0' && line[*i + k] != '\n')
-	{
-		if (!(ft_is_scene_element(line[*i + k]) || ft_is_player_start(line[*i + k]) || line[*i + k] == ' '))
-			return (NULL);
-		if (ft_is_scene_element(line[*i + k]))
-		{
-			if (line[*i + k] == '2')
-			{
-				desc->nb_sprite = desc->nb_sprite + 1;
-			}
-			j++;
-		}
-		else if (ft_is_player_start(line[*i + k]))
-		{
-			if (desc->player_found == 1)
-				return (NULL);
-			ft_add_player(desc, line[*i + k], j, l);
-			line[*i + k] = '0';
-			j++;
-		}
-		k++;
-	}
-	if (desc->nb_l == 0)
-		desc->nb_col = j;
-	else
-	{
-		if (desc->nb_col != j)
-			return (NULL);
-	}
-	new_line = malloc(sizeof(char) * (j + 1));
-	j = 0;
-	while (line[*i] != '\0' && line[*i] != '\n')
-	{
-		if (ft_is_scene_element(line[*i]) || ft_is_player_start(line[*i]))
-		{
-			new_line[j] = line[*i];
-			j++;
-		}
-		*i = *i + 1;
-	}
-	new_line[j] = '\0';
-	return (new_line);
-}
-
-int		ft_create_scene(t_desc *desc, char *scene_str)
-{
-	char	*clean_line;
-	int		count;
-	int		i;
-	int		j;
-	int		k;
-
-	i = 0;
-	count = 0;
-	while (scene_str[i])
-	{
-		if (scene_str[i] == '\n')
-			count++;
-		i++;
-	}
-	i = 0;
-	if (!(desc->scene = malloc(sizeof(char *) * (count + 2))))
-		return (-1);
-	while (desc->nb_l < count + 1)
-	{
-		if (!(clean_line = ft_clean_scene_line(desc, scene_str, &i, desc->nb_l)))
-			return (-1);
-		j = 0;
-		if (clean_line[desc->nb_col - 1] != '1')
-			return (-1);
-		if (desc->nb_l == 0 || desc->nb_l == count)
-		{
-			while (clean_line[j])
-			{
-				if (clean_line[j] != '1')
-					return (-1);
-				j++;
-			}
-		}
-		i++;
-		desc->scene[desc->nb_l] = clean_line;
-		desc->nb_l = desc->nb_l + 1;
-	}
-	desc->scene[desc->nb_l] = NULL;
-	if (!(desc->sprite_tab = malloc(sizeof(*(desc->sprite_tab)) * desc->nb_sprite)))
-		return (-1);
-	i = 0;
-	j = 0;
-	k = 0;
-	while (desc->scene[i])
-	{
-		j = 0;
-		while (desc->scene[i][j])
-		{
-			if (desc->scene[i][j] == '2')
-			{
-				(desc->sprite_tab)[k].x = j + 0.5;
-				(desc->sprite_tab)[k].y = i + 0.5;
-				k++;
-			}
-			j++;
-		}
-		i++;
-	}
-	return (0);
 }
 
 int		ft_check_line(t_desc *desc, char *line, char first_char)
@@ -271,15 +118,15 @@ int		ft_check_description(char *filename, t_desc *desc)
 	while ((res = ft_get_next_line(fd, &line)))
 	{
 		if ((ft_check_line(desc, line, line[0])) == -1)
-			return (0);
+			return (ft_free_str(line));
 		free(line);
 		line = NULL;
 	}
 	if ((ft_check_line(desc, line, line[0])) == -1)
-		return (0);
+		return (ft_free_str(line));
 	free(line);
 	line = NULL;
-	if ((ft_create_scene(desc, desc->scene_str)) == -1)
+	if ((ft_create_scene(desc, desc->scene_str)) != 1)
 		return (-1);
 	return (1);
 }

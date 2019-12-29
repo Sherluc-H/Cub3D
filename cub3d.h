@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:56:34 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 20:31:09 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 20:39:09 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 # endif
 
 # define ROTATION_ANGLE 10
-# define MOVE_DIST 0.0888
+# define MOVE_DIST 0.066
 
 # define RED 16711680
 # define BLUE 255
@@ -161,16 +161,28 @@ int		ft_is_print(char c);
 int		ft_is_scene_element(char c);
 int		ft_is_player_start(char c);
 
+//ft_is_plus.c
+int		ft_is_path_identifier(char *str, int i);
+int		ft_is_description_ready_scene(t_desc *desc);
+
 //ft_utils.c
 int		ft_strlen(char *str);
 int		ft_strcmp(char *str1, char *str2);
 char	*ft_strjoin(char *str1, char *str2);
 int		ft_atoi_simple(char *str);
 
+//ft_utils_plus.c
+char	*ft_strjoin_with_sep(char *str1, char *str2, char sep);
+
+//ft_check_args_utils.c
+int		ft_create_scene(t_desc *desc, char *scene_str);
+char	*ft_clean_scene_line(t_desc *desc, char *line, int *i, int k);
+
 //ft_check_args.c
 int		ft_check_file_extension(char *filename, char *extension);
 int		ft_check_description(char *filename, t_desc *desc);
 int		ft_check_args(int argc, char **argv, t_desc *desc);
+void	ft_add_player(t_desc *desc, char player_char, int j, int l);
 
 //ft_get_description_utils.c
 int		ft_move_space(char *str, int *i);
@@ -183,8 +195,7 @@ int		ft_get_identifier(char *str, int *i, t_desc *desc);
 int		ft_parse_resolution(char *str, t_desc *desc, int *i);
 int		ft_parse_path(char *str, t_desc *desc, int *i);
 int		ft_parse_color(char *str, int tab[3], int *color_ok, int *desc_color);
-int		ft_is_path_identifier(char *str, int i);
-int		ft_is_description_ready_scene(t_desc *desc);
+void	ft_give_path(t_desc *desc, int path_id, char *new);
 
 //ft_get_textures.c
 int 	ft_init_texture(t_mlx_data *mlx_data);
@@ -198,16 +209,25 @@ void	ft_put_pixel_to_image(t_mlx_data mlx_data, int x, int y, int color_tab[3]);
 int		ft_draw_map(t_desc *desc, t_mlx_data mlx_data);
 void	ft_draw_walls(t_mlx_data mlx_data);
 
+//ft_handle_keys_utils.c
+int		ft_precise_collision(t_mlx_data *mlx_data,
+		double new_play_x, double new_play_y);
+
 //ft_handle_keys.c
 int		ft_key_pressed(int key, t_mlx_data *mlx_data);
 
 //ft_save_screen.c
 int		ft_save(t_mlx_data mlx_data);
 
-//ft_cub3d.c
-void	ft_freer(t_desc *desc);
-int 	ft_exit_hook(t_mlx_data *mlx_data);
+//ft_handle_errors.c
 int 	ft_set_error(t_desc *desc, t_error error);
 int		ft_show_error(t_error error, t_mlx_data *mlx_data);
+void	ft_freer(t_desc *desc);
+int		ft_free_remain(t_remain **remain);
+int		ft_free_str(char *str);
+
+//ft_cub3d.c
+int 	ft_exit_hook(t_mlx_data *mlx_data);
+
 
 #endif

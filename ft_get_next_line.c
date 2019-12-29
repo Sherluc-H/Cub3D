@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/20 18:54:27 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 12:58:37 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 17:41:22 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,6 @@ int	ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 	char	*str2;
 
 	i = 0;
-	buf[*rd] = '\0';
 	if (!(str2 = malloc(sizeof(char) * (*rd + 1))))
 		return (-1);
 	while (i < *rd)
@@ -94,16 +93,29 @@ int	ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 	return (-1);
 }
 
-int	ft_free_remain(t_remain **remain)
+int	ft_remain_init(int fd, char **line, t_remain **remain, int *end_line)
 {
-	if ((*remain))
+	*end_line = 0;
+	*line = NULL;
+	if (!*remain)
 	{
-		free((*remain)->str);
+		if (!(*remain = malloc(sizeof(**remain))))
+			return (-1);
 		(*remain)->str = NULL;
 		(*remain)->size = 0;
-		free(*remain);
 	}
-	return (0);
+	if (fd >= 0)
+	{
+		if ((*remain)->size > 0)
+			ft_cut_remain((*remain)->str, remain, end_line, line);
+		else
+		{
+			if (!(*line = malloc(sizeof(char) * 1)))
+				return (-1);
+			(*line)[0] = '\0';
+		}
+	}
+	return (1);
 }
 
 int	ft_get_next_line(int fd, char **line)
@@ -113,29 +125,11 @@ int	ft_get_next_line(int fd, char **line)
 	int				rd;
 	char			*buf;
 
-	end_line = 0;
-	*line = NULL;
-	if (!remain)
-	{
-		if (!(remain = malloc(sizeof(*remain))))
-			return (-1);
-		remain->str = NULL;
-		remain->size = 0;
-	}
-	if (fd >= 0)
-	{
-		if (remain->size > 0)
-			ft_cut_remain(remain->str, &remain, &end_line, line);
-		else
-		{
-			if (!(*line = malloc(sizeof(char) * 1)))
-				return (-1);
-			(*line)[0] = '\0';
-		}
-	}
+	if ((ft_remain_init(fd, line, &remain, &end_line)) == -1)
+		return (-1);
 	if (!(buf = malloc(sizeof(char) * (BUFFER_SIZE + 1))))
 		return (-1);
-	while (!end_line && (rd = read(fd, buf, BUFFER_SIZE)))
+	while (!end_line && end_line != -1 && (rd = read(fd, buf, BUFFER_SIZE)))
 		end_line = ft_cut_line(buf, &remain, &rd, line);
 	free(buf);
 	buf = NULL;

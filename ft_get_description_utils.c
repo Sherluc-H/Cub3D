@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:58:25 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/21 19:20:34 by lhuang           ###   ########.fr       */
+/*   Updated: 2019/12/29 17:44:31 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,20 +70,6 @@ int		ft_get_number(char *str, int *i)
 	}
 	else
 		return (-1);
-}
-
-void	ft_give_path(t_desc *desc, int path_id, char *new)
-{
-	if (path_id == NORTH)
-		desc->north_path = new;
-	else if (path_id == SOUTH)
-		desc->south_path = new;
-	else if (path_id == WEST)
-		desc->west_path = new;
-	else if (path_id == EAST)
-		desc->east_path = new;
-	else if (path_id == SPRITE)
-		desc->sprite_path = new;
 }
 
 int		ft_get_path(char *str, int *i, t_desc *desc, int path_id)
