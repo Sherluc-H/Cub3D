@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:58:25 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 17:44:31 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/03 20:50:04 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,8 @@ int		ft_get_number(char *str, int *i)
 		j = 0;
 		while (ft_is_number(str[*i + j]))
 			j++;
-		new = malloc(sizeof(char) * (j + 1));
+		if (!(new = malloc(sizeof(char) * (j + 1))))
+			return (-1);
 		j = 0;
 		while (ft_is_number(str[*i]))
 		{

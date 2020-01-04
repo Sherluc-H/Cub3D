@@ -6,19 +6,18 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/11/30 14:57:00 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 17:41:47 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/04 11:13:59 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-void	ft_init_desc(t_desc *desc)
+static void	ft_init_desc(t_desc *desc)
 {
 	desc->error = 0;
 	desc->resolution_ok = 0;
 	desc->x = 0;
 	desc->y = 0;
-	desc->to_save = 0;
 	desc->north_path = NULL;
 	desc->south_path = NULL;
 	desc->west_path = NULL;
@@ -42,101 +41,52 @@ void	ft_init_desc(t_desc *desc)
 	desc->nb_sprite = 0;
 }
 
-int		ft_exit_hook(t_mlx_data *mlx_data)
+int			ft_exit_hook(t_mlx_data *mlx_data)
 {
 	mlx_destroy_window(mlx_data->mlx_ptr, mlx_data->win_ptr);
 	ft_freer(mlx_data->desc);
-	system("leaks Cub3D");
 	exit(0);
 	return (0);
 }
 
-void	ft_print_desc(t_desc *desc)
-{
-	printf("x = %d\n", desc->x);
-	printf("y = %d\n", desc->y);
-	printf("north = %s\n", desc->north_path);
-	printf("south = %s\n", desc->south_path);
-	printf("west = %s\n", desc->west_path);
-	printf("east = %s\n", desc->east_path);
-	printf("sprite = %s\n", desc->sprite_path);
-	printf("resolution_ok = %d\n", desc->resolution_ok);
-	printf("floor_ok = %d\n", desc->floor_ok);
-	printf("ceiling_ok = %d\n", desc->ceiling_ok);
-	printf("floor color = %d, %d, %d\n", desc->floor_tab[0], desc->floor_tab[1], desc->floor_tab[2]);
-	printf("ceiling color = %d, %d, %d\n", desc->ceiling_tab[0], desc->ceiling_tab[1], desc->ceiling_tab[2]);
-	printf("col = %d\n", desc->nb_col);
-	printf("lines = %d\n", desc->nb_l);
-	printf("floor color = %d\n", desc->floor_color);
-	printf("ceiling color = %d\n", desc->ceiling_color);
-	printf("play x = %f\n", desc->play_pos.x);
-	printf("play y = %f\n", desc->play_pos.y);
-	printf("dir x = %f\n", desc->dir_pos.x);
-	printf("dir y = %f\n", desc->dir_pos.y);
-}
-
-void	ft_print_map(t_desc *desc)
-{
-	int i;
-	int j;
-
-	j = 0;
-	printf("---MAP---\n");
-	while (desc->scene[j])
-	{
-		i = 0;
-		while (desc->scene[j][i])
-		{
-			printf("%c", desc->scene[j][i]);
-			i++;
-		}
-		printf("\n");
-		j++;
-	}
-	printf("---END---\n");
-}
-
-int		ft_init_mlx(t_mlx_data *mlx_data, t_desc desc)
+static int	ft_init_mlx(t_mlx_data *mlx_data, t_desc desc)
 {
 	if (!(mlx_data->mlx_ptr = mlx_init()))
-	{
-		write(1, "error\n", 6);
 		return (-1);
-	}
-	if (!(mlx_data->win_ptr = mlx_new_window(mlx_data->mlx_ptr, desc.x, desc.y, "Cub3D")))
-	{
-		write(1, "error\n", 6);
+	if (!(mlx_data->win_ptr = mlx_new_window(mlx_data->mlx_ptr, desc.x, desc.y,
+			"Cub3D")))
 		return (-1);
-	}
-	if ((mlx_data->img_ptr = mlx_new_image(mlx_data->mlx_ptr, desc.x, desc.y)) == NULL)
+	if (!(mlx_data->img_ptr = mlx_new_image(mlx_data->mlx_ptr, desc.x, desc.y)))
 		return (-1);
-	mlx_data->main_img_data = mlx_get_data_addr(mlx_data->img_ptr, &mlx_data->main_img_bpp, &mlx_data->main_img_size_line, &mlx_data->main_img_endian);
+	if (!(mlx_data->main_img_data = mlx_get_data_addr(mlx_data->img_ptr,
+			&mlx_data->main_img_bpp, &mlx_data->main_img_size_line,
+				&mlx_data->main_img_endian)))
+		return (-1);
 	if ((ft_init_texture(mlx_data)) == -1)
 		return (-1);
 	return (1);
 }
 
-int		main(int argc, char **argv)
+int			main(int argc, char **argv)
 {
 	t_desc		desc;
 	t_mlx_data	mlx_data;
 
 	ft_init_desc(&desc);
+	desc.to_save = 0;
 	mlx_data.desc = &desc;
+	mlx_data.map_on = 0;
 	if (!ft_check_args(argc, argv, &desc))
 		return (ft_show_error(desc.error, &mlx_data));
-	//ft_print_desc(&desc);
-	//ft_print_map(&desc);
 	if ((ft_init_mlx(&mlx_data, desc)) == -1)
 		return (ft_show_error(MLX, &mlx_data));
-	ft_draw_walls(mlx_data);
+	if ((ft_draw(mlx_data)) == -1)
+		return (ft_show_error(MALLOC, &mlx_data));
 	if (desc.to_save)
 		return (ft_save(mlx_data));
-	if ((ft_draw_map(&desc, mlx_data)) == -1)
-		return (-1);
 	mlx_do_key_autorepeaton(mlx_data.mlx_ptr);
-	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr, mlx_data.img_ptr, 0, 0);
-	ft_display_texture_top(mlx_data);
+	mlx_put_image_to_window(mlx_data.mlx_ptr, mlx_data.win_ptr,
+		mlx_data.img_ptr, 0, 0);
 	mlx_hook(mlx_data.win_ptr, 2, 0, ft_key_pressed, &mlx_data);
 	mlx_hook(mlx_data.win_ptr, 17, 0, ft_exit_hook, &mlx_data);
 	mlx_loop(mlx_data.mlx_ptr);

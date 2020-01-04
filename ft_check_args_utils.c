@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/29 17:48:02 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 21:18:35 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/04 11:13:13 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static char	*ft_create_line(t_desc *desc, char *line, int j, int *i)
 	return (new_line);
 }
 
-char		*ft_clean_scene_line(t_desc *desc, char *line, int *i, int k)
+static char	*ft_clean_scene_line(t_desc *desc, char *line, int *i, int k)
 {
 	int		j;
 
@@ -69,12 +69,12 @@ char		*ft_clean_scene_line(t_desc *desc, char *line, int *i, int k)
 	return (ft_create_line(desc, line, j, i));
 }
 
-int			ft_create_sprite_tab(t_desc *desc)
+static int	ft_create_sprite_tab(t_desc *desc, int i, int j)
 {
-	int i;
-	int j;
 	int k;
 
+	if (!desc->player_found)
+		return (-1);
 	if (!(desc->sprite_tab = malloc(sizeof(*(desc->sprite_tab)) *
 		desc->nb_sprite)))
 		return (-1);
@@ -109,13 +109,15 @@ static int	ft_add_to_scene(t_desc *desc, char *scene_str, int *i, int count)
 	if (!(clean_line = ft_clean_scene_line(desc, scene_str, i, 0)))
 		return (0);
 	if (clean_line[desc->nb_col - 1] != '1')
-		return (ft_free_str(clean_line));
+	{
+		return (ft_free_str(clean_line, 0));
+	}
 	if (desc->nb_l == 0 || desc->nb_l == count)
 	{
 		while (clean_line[j])
 		{
 			if (clean_line[j] != '1')
-				return (ft_free_str(clean_line));
+				return (ft_free_str(clean_line, 0));
 			j++;
 		}
 	}
@@ -124,12 +126,10 @@ static int	ft_add_to_scene(t_desc *desc, char *scene_str, int *i, int count)
 	return (1);
 }
 
-int			ft_create_scene(t_desc *desc, char *scene_str)
+int			ft_create_scene(t_desc *desc, char *scene_str, int i)
 {
 	int		count;
-	int		i;
 
-	i = 0;
 	count = 0;
 	while (scene_str[i])
 	{
@@ -137,6 +137,8 @@ int			ft_create_scene(t_desc *desc, char *scene_str)
 			count++;
 		i++;
 	}
+	if (count <= 1)
+		return (-1);
 	i = 0;
 	if (!(desc->scene = malloc(sizeof(char *) * (count + 2))))
 		return (-1);
@@ -147,7 +149,7 @@ int			ft_create_scene(t_desc *desc, char *scene_str)
 		i++;
 	}
 	desc->scene[desc->nb_l] = NULL;
-	if ((ft_create_sprite_tab(desc)) == -1)
+	if ((ft_create_sprite_tab(desc, 0, 0)) == -1)
 		return (-1);
 	return (1);
 }

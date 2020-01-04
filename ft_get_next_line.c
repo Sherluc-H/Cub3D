@@ -6,13 +6,13 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/20 18:54:27 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 17:41:22 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/04 11:04:56 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3d.h"
 
-int	ft_create_remain(t_remain **remain, int i, int end_line, char *buf)
+static int	ft_create_remain(t_remain **remain, int i, int end_line, char *buf)
 {
 	int		j;
 	char	*new_remain;
@@ -40,7 +40,8 @@ int	ft_create_remain(t_remain **remain, int i, int end_line, char *buf)
 	return (1);
 }
 
-int	ft_cut_remain(char *buf, t_remain **remain, int *end_line, char **line)
+static int	ft_cut_remain(char *buf, t_remain **remain, int *end_line,
+	char **line)
 {
 	int		i;
 	char	*str2;
@@ -64,7 +65,7 @@ int	ft_cut_remain(char *buf, t_remain **remain, int *end_line, char **line)
 	return (1);
 }
 
-int	ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
+static int	ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 {
 	int		i;
 	char	*str2;
@@ -93,7 +94,8 @@ int	ft_cut_line(char *buf, t_remain **remain, int *rd, char **line)
 	return (-1);
 }
 
-int	ft_remain_init(int fd, char **line, t_remain **remain, int *end_line)
+static int	ft_remain_init(int fd, char **line, t_remain **remain,
+	int *end_line)
 {
 	*end_line = 0;
 	*line = NULL;
@@ -107,18 +109,21 @@ int	ft_remain_init(int fd, char **line, t_remain **remain, int *end_line)
 	if (fd >= 0)
 	{
 		if ((*remain)->size > 0)
-			ft_cut_remain((*remain)->str, remain, end_line, line);
+			return (ft_cut_remain((*remain)->str, remain, end_line, line));
 		else
 		{
 			if (!(*line = malloc(sizeof(char) * 1)))
+			{
+				ft_free_remain(remain);
 				return (-1);
+			}
 			(*line)[0] = '\0';
 		}
 	}
 	return (1);
 }
 
-int	ft_get_next_line(int fd, char **line)
+int			ft_get_next_line(int fd, char **line)
 {
 	static t_remain	*remain = NULL;
 	int				end_line;

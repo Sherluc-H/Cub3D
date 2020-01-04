@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/28 12:31:30 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/28 20:33:00 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/03 21:26:19 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,16 @@ static void	ft_add_header_bmp(unsigned char *h_tab, t_mlx_data mlx_data, int i)
 	*int_p = mlx_data.desc->y;
 }
 
+static int	ft_free_unstr(unsigned char *unstr, int r)
+{
+	if (unstr)
+	{
+		free(unstr);
+		unstr = NULL;
+	}
+	return (r);
+}
+
 static int	ft_screen_bmp(t_mlx_data mlx_data, int i, int l)
 {
 	unsigned char	*tab;
@@ -51,20 +61,20 @@ static int	ft_screen_bmp(t_mlx_data mlx_data, int i, int l)
 		return (-1);
 	if ((fd = open("cub3d.bmp", O_CREAT | O_WRONLY,
 		S_IRWXU | S_IRWXG | S_IRWXO)) == -1)
-		return (-2);
+		return (ft_free_unstr(tab, -2));
 	ft_add_header_bmp(h_tab, mlx_data, 0);
 	write(fd, h_tab, 54);
-	while (l < mlx_data.desc->y)
+	while (l >= 0)
 	{
-		if (i == mlx_data.desc->x * 4)
+		while (i < mlx_data.desc->x * 4)
 		{
-			write(fd, tab, mlx_data.desc->x * 4);
-			i = 0;
-			l++;
+			tab[i] = mlx_data.main_img_data[mlx_data.main_img_size_line *
+				l + i];
+			i++;
 		}
-		tab[i] = mlx_data.main_img_data[mlx_data.main_img_size_line *
-		(mlx_data.desc->y - 1) - (mlx_data.main_img_size_line * l) + i];
-		i++;
+		write(fd, tab, mlx_data.desc->x * 4);
+		i = 0;
+		l--;
 	}
 	free(tab);
 	return (1);
@@ -74,7 +84,7 @@ int			ft_save(t_mlx_data mlx_data)
 {
 	int ret;
 
-	ret = ft_screen_bmp(mlx_data, 0, 0);
+	ret = ft_screen_bmp(mlx_data, 0, mlx_data.desc->y - 1);
 	if (ret == -1)
 		return (ft_show_error(MALLOC, &mlx_data));
 	else if (ret == -2)

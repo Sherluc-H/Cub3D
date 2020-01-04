@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/19 16:16:26 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 17:26:58 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/03 16:25:30 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	ft_rotate_camera(t_dir_pos *dir_pos, double rot_angle)
 					dir_pos->plane_y * cos(rot_angle);
 }
 
-static void	ft_move_to_new_pos(t_mlx_data *mlx_data,
+static int	ft_move_to_new_pos(t_mlx_data *mlx_data,
 			double new_play_x, double new_play_y)
 {
 	if (mlx_data->desc->scene[(int)(float)(new_play_y)]
@@ -35,12 +35,19 @@ static void	ft_move_to_new_pos(t_mlx_data *mlx_data,
 	{
 		mlx_data->desc->play_pos.x = new_play_x;
 		mlx_data->desc->play_pos.y = new_play_y;
-		ft_draw_walls(*mlx_data);
-		ft_draw_map(mlx_data->desc, *mlx_data);
+		if ((ft_draw(*mlx_data)) == -1)
+		{
+			write(2, "Error\n", 6);
+			write(2, "Problem during allocation\n", 26);
+			ft_exit_hook(mlx_data);
+			return (-1);
+		}
+		if (mlx_data->map_on)
+			ft_draw_map(*mlx_data);
 		mlx_put_image_to_window(mlx_data->mlx_ptr,
 			mlx_data->win_ptr, mlx_data->img_ptr, 0, 0);
-		ft_display_texture_top(*mlx_data);
 	}
+	return (1);
 }
 
 static void	ft_move_left_right(int key, t_mlx_data *mlx_data,
@@ -114,6 +121,8 @@ int			ft_key_pressed(int key, t_mlx_data *mlx_data)
 	camera_rot_angle = (M_PI / 180) * ROTATION_ANGLE;
 	if (key == KEY_ESC)
 		ft_exit_hook(mlx_data);
+	else if (key == KEY_M)
+		mlx_data->map_on = mlx_data->map_on ? 0 : 1;
 	else if (key == KEY_LEFT)
 		ft_rotate_camera(&(mlx_data->desc->dir_pos), -camera_rot_angle);
 	else if (key == KEY_RIGHT)
@@ -127,8 +136,5 @@ int			ft_key_pressed(int key, t_mlx_data *mlx_data)
 		if ((ft_precise_collision(mlx_data, new_play_x, new_play_y)) == 0)
 			return (0);
 	ft_move_to_new_pos(mlx_data, new_play_x, new_play_y);
-	// printf("!x = %f, int x = %d, y = %f, int y = %d|%c|\n", mlx_data->desc->play_pos.x, (int)(float)(mlx_data->desc->play_pos.x), mlx_data->desc->play_pos.y, (int)(float)(mlx_data->desc->play_pos.y), mlx_data->desc->scene[(int)(float)(mlx_data->desc->play_pos.y)][(int)(float)(mlx_data->desc->play_pos.x)]);
-	// printf("dir x = %f, int plane x = %f, dir y = %f, int plane y = %f\n", mlx_data->desc->dir_pos.x, mlx_data->desc->dir_pos.plane_x, mlx_data->desc->dir_pos.y, mlx_data->desc->dir_pos.plane_y);
-	//printf("key pressed = %d\n", key);
 	return (0);
 }

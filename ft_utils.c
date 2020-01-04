@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 16:35:03 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 11:42:13 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/04 11:06:24 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,11 @@ int		ft_atoi_simple(char *str)
 	{
 		nb = nb * 10;
 		nb = nb + str[i] - 48;
+		if (nb > 2560)
+		{
+			free(str);
+			return (2560);
+		}
 		i++;
 	}
 	free(str);

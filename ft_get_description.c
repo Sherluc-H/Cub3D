@@ -6,7 +6,7 @@
 /*   By: lhuang <lhuang@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/12/01 17:55:51 by lhuang            #+#    #+#             */
-/*   Updated: 2019/12/29 17:44:36 by lhuang           ###   ########.fr       */
+/*   Updated: 2020/01/03 15:24:54 by lhuang           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,38 +59,38 @@ int		ft_parse_color(char *str, int tab[3], int *color_ok, int *desc_color)
 
 	i = 1;
 	if (!(ft_move_space(str, &i)))
-		return (0);
+		return (-1);
 	if ((tab[0] = ft_get_number(str, &i)) == -1 || tab[0] < 0 || tab[0] > 255)
-		return (0);
+		return (-1);
 	if (str[i] == ',')
 		i = i + 1;
 	else
-		return (0);
+		return (-1);
 	if ((tab[1] = ft_get_number(str, &i)) == -1 || tab[1] < 0 || tab[1] > 255)
-		return (0);
+		return (-1);
 	if (str[i] == ',')
 		i = i + 1;
 	else
-		return (0);
+		return (-1);
 	if ((tab[2] = ft_get_number(str, &i)) == -1 || tab[2] < 0 || tab[2] > 255)
-		return (0);
+		return (-1);
 	*color_ok = 1;
 	if (!(ft_end_identifier(str, &i)))
-		return (0);
+		return (-1);
 	*desc_color = tab[0] * 65536 + tab[1] * 256 + tab[2];
 	return (1);
 }
 
-void	ft_give_path(t_desc *desc, int path_id, char *new)
+void	ft_give_path(t_desc *desc, int path_id, char *path)
 {
 	if (path_id == NORTH)
-		desc->north_path = new;
+		desc->north_path = path;
 	else if (path_id == SOUTH)
-		desc->south_path = new;
+		desc->south_path = path;
 	else if (path_id == WEST)
-		desc->west_path = new;
+		desc->west_path = path;
 	else if (path_id == EAST)
-		desc->east_path = new;
+		desc->east_path = path;
 	else if (path_id == SPRITE)
-		desc->sprite_path = new;
+		desc->sprite_path = path;
 }
